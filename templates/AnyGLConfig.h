@@ -4,8 +4,8 @@
 
 #if defined(_WIN32)
 #	define ANYGL_WINDOWS 1
-#elif defined(linux)
-#	define ANYGL_LINUX 1
+#elif defined(__ANDROID__)
+#	define ANYGL_ANDROID 1
 #elif defined(__APPLE__)
 #	define ANYGL_APPLE 1
 #	include "TargetConditionals"
@@ -14,17 +14,12 @@
 #	endif
 #endif
 
-/* Android is also Linux, so separate. */
-#if defined(__ANDROID__)
-#	define ANYGL_ANDROID 1
-#endif
-
 #ifndef ANYGL_WINDOWS
 #define ANYGL_WINDOWS 0
 #endif
 
-#ifndef ANYGL_LINUX
-#define ANYGL_LINUX 0
+#ifndef ANYGL_ANDROID
+#define ANYGL_ANDROID 0
 #endif
 
 #ifndef ANYGL_APPLE
@@ -35,31 +30,27 @@
 #define ANYGL_IOS 0
 #endif
 
-#ifndef ANYGL_ANDROID
-#define ANYGL_ANDROID 0
-#endif
-
 /* #define this to override whether or not to use OpenGL ES. */
 #ifndef ANYGL_GLES
 #define ANYGL_GLES ANYGL_ANDROID || ANYGL_IOS
 #endif
 
 /* Libraries for loading OpenGL functions. */
-#define ANYGL_LOAD_EGL   0
-#define ANYGL_LOAD_GLX   1
+#define ANYGL_LOAD_APPLE 0
+#define ANYGL_LOAD_EGL   1
 #define ANYGL_LOAD_WGL   2
-#define ANYGL_LOAD_APPLE 3
+#define ANYGL_LOAD_GLX   3
 
 /* #define this to override the default library. */
-#ifndef ANYGL_DEFAULT_LOAD
+#ifndef ANYGL_LOAD
 #ifdef ANYGL_APPLE
-#	define ANYGL_DEFUALT_LOAD ANYGL_LOAD_APPLE
+#	define ANYGL_LOAD ANYGL_LOAD_APPLE
 #elif ANYGL_GLES
-#	define ANYGL_DEFAULT_LOAD ANYGL_LOAD_EGL
+#	define ANYGL_LOAD ANYGL_LOAD_EGL
 #elif ANYGL_WINDOWS
-#	define ANYGL_DEFAULT_LOAD ANYGL_LOAD_WGL
+#	define ANYGL_LOAD ANYGL_LOAD_WGL
 #else
-#	define ANYGL_DEFAULT_LOAD ANYGL_LOAD_GLX
+#	define ANYGL_LOAD ANYGL_LOAD_GLX
 #endif
 #endif
 
