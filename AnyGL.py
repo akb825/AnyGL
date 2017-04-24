@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import errno, io, os, re, string, sys
+import errno, io, os, re, shutil, string, sys
 from optparse import OptionParser
 from lxml import etree
 from reg import *
@@ -213,6 +213,9 @@ options.add_option('-i', '--input', dest = 'inDir', help = 'Input directory with
 	default = 'OpenGLRegistry/xml')
 options.add_option('-o', '--output', dest = 'outDir',
 	help = 'Output directory for the generated files.', default = 'generated')
+options.add_option('-t', '--template-dir', dest='templateDir',
+	help = 'Directory with the template files. These will be copied to the generated output.',
+	default = 'templates')
 options.add_option('-p', '--profile', dest = 'profile',
 	help = 'Profile to use, either core or compatibility.', default = 'core')
 options.add_option('-e', '--extensions', dest = 'extensions',
@@ -227,6 +230,13 @@ try:
 except OSError as e:
 	if e.errno != errno.EEXIST:
 		raise
+
+for entry in os.listdir(args.templateDir):
+	if entry and entry[0] == '.':
+		continue
+	path = os.path.join(args.templateDir, entry)
+	if os.path.isfile(path):
+		shutil.copy(path, args.outDir)
 
 write('Parsing ', glXml, '...')
 glRegistry = Registry()
