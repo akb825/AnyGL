@@ -35,16 +35,19 @@
 #define ANYGL_GLES ANYGL_ANDROID || ANYGL_IOS
 #endif
 
-/* Libraries for loading OpenGL functions. */
-#define ANYGL_LOAD_APPLE 0
-#define ANYGL_LOAD_EGL   1
-#define ANYGL_LOAD_WGL   2
-#define ANYGL_LOAD_GLX   3
+/*
+ * Libraries for loading OpenGL functions.
+ * ANYGL_LOAD_SYSPTR takes the function pointer from the system OpenGL includes.
+ */
+#define ANYGL_LOAD_SYSPTR 0
+#define ANYGL_LOAD_EGL    1
+#define ANYGL_LOAD_WGL    2
+#define ANYGL_LOAD_GLX    3
 
 /* #define this to override the default library. */
 #ifndef ANYGL_LOAD
-#ifdef ANYGL_APPLE
-#	define ANYGL_LOAD ANYGL_LOAD_APPLE
+#if ANYGL_APPLE
+#	define ANYGL_LOAD ANYGL_LOAD_FPTR
 #elif ANYGL_GLES
 #	define ANYGL_LOAD ANYGL_LOAD_EGL
 #elif ANYGL_WINDOWS
@@ -76,14 +79,23 @@
 
 /* #define this to override the calling convention. */
 #ifndef APIENTRY
-#if ANYGL_WINDOWS && !defined(__CYGWIN__)
+#if ANYGL_WINDOWS
 #	define APIENTRY __stdcall
 #else
 #	define APIENTRY
 #endif
 #endif
 
-/* #define this to 0 if you don't want to build the debug functions, reducing compiled size. */
+/*
+ * #define this to 1 if you want to allow debugging OpenGL functions. Useful for debugging, but
+ * adds some overhead, so not suitable for release builds.
+ */
 #ifndef ANYGL_ALLOW_DEBUG
-#define ANYGL_ALLOW_DEBUG 1
+#ifdef NDEBUG
+#	define ANYGL_ALLOW_DEBUG 0
+#else
+#	define ANYGL_ALLOW_DEBUG 1
+#endif
+#endif
+
 #endif
