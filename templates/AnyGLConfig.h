@@ -47,7 +47,7 @@
 /* #define this to override the default library. */
 #ifndef ANYGL_LOAD
 #if ANYGL_APPLE
-#	define ANYGL_LOAD ANYGL_LOAD_FPTR
+#	define ANYGL_LOAD ANYGL_LOAD_SYSPTR
 #elif ANYGL_GLES
 #	define ANYGL_LOAD ANYGL_LOAD_EGL
 #elif ANYGL_WINDOWS

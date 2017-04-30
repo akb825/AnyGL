@@ -17,3 +17,4 @@ from .FunctionPointerGenerator import FunctionPointerGenerator
 from .GLHeaderGenerator import GLHeaderGenerator
 from .GLXInitGenerator import GLXInitGenerator
 from .GLXWHeaderGenerator import GLXWHeaderGenerator
+from .WGLInitGenerator import WGLInitGenerator

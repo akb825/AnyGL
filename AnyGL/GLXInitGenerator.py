@@ -85,7 +85,7 @@ class GLXInitGenerator(OutputGenerator):
 						file = self.outFile)
 
 		self.newLine()
-		write('int AnyGL_init(void)\n{\n', file = self.outFile)
+		write('int AnyGL_init(void)\n{', file = self.outFile)
 
 		# Core functions load from system pointers.
 		for feature in self.coreFeatures:

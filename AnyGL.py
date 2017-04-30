@@ -64,63 +64,60 @@ glRegistry = Registry()
 glRegistry.loadElementTree(etree.parse(glXml))
 
 apiname = ['gl', 'gles2']
-glHeaderOptions = GeneratorOptions(
+glOptions = GeneratorOptions(
 	filename = os.path.join(args.outDir, 'gl.h'),
 	apiname = apiname,
 	profile = args.profile,
 	addExtensions = args.extensions)
-write('Outputting', glHeaderOptions.filename + '...')
+write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(GLHeaderGenerator(diagFile = diagFile))
-glRegistry.apiGen(glHeaderOptions)
+glRegistry.apiGen(glOptions)
 
-functionPointerOptions = GeneratorOptions(
-	filename = os.path.join(args.outDir, 'AnyGLFunctions.c'),
-	apiname = apiname,
-	profile = args.profile,
-	addExtensions = args.extensions)
-write('Outputting', functionPointerOptions.filename + '...')
+glOptions.filename = os.path.join(args.outDir, 'AnyGLFunctions.c')
+write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(FunctionPointerGenerator(diagFile = diagFile))
-glRegistry.apiGen(functionPointerOptions)
+glRegistry.apiGen(glOptions)
 
 write('Parsing', glxXml + '...')
 glxRegistry = Registry()
 glxRegistry.loadElementTree(etree.parse(glxXml))
 
-glxHeaderOptions = GeneratorOptions(
+glxOptions = GeneratorOptions(
 	filename = os.path.join(args.outDir, 'glx.h'),
 	apiname = ['glx'],
 	profile = args.profile,
 	addExtensions = '.*',
-	removeExtensions = 'GLX_ARB_get_proc_address')
-write('Outputting', glxHeaderOptions.filename + '...')
+	removeExtensions = '(GLX_ARB_get_proc_address)|(GLX_SGI.*)')
+write('Outputting', glxOptions.filename + '...')
 glxRegistry.setGenerator(GLXWHeaderGenerator(['X11/Xlib.h', 'X11/Xutil.h'], 'ANYGL_LOAD_GLX',
 	extensionsOnly = False, diagFile = diagFile))
-glxRegistry.apiGen(glxHeaderOptions)
+glxRegistry.apiGen(glxOptions)
 
-glxLoadOptions = GeneratorOptions(
-	filename = os.path.join(args.outDir, 'AnyGLInitGLX.c'),
-	apiname = ['glx'],
-	profile = args.profile,
-	addExtensions = '.*',
-	removeExtensions = '(GLX_ARB_get_proc_address)|(GLX_SGI.*)')
-write('Outputting', glxLoadOptions.filename + '...')
+glxOptions.filename = os.path.join(args.outDir, 'AnyGLInitGLX.c')
+write('Outputting', glxOptions.filename + '...')
 glRegistry.apiReset()
 glxRegistry.setGenerator(GLXInitGenerator(diagFile = diagFile))
-glxRegistry.apiGen(glxLoadOptions)
+glxRegistry.apiGen(glxOptions)
 
 write('Parsing', wglXml + '...')
 wglRegistry = Registry()
 wglRegistry.loadElementTree(etree.parse(wglXml))
 
-wglHeaderOptions = GeneratorOptions(
+wglOptions = GeneratorOptions(
 	filename = os.path.join(args.outDir, 'wgl.h'),
 	apiname = ['wgl'],
 	profile = args.profile,
 	emitversions = None,
 	addExtensions = '.*')
-write('Outputting', wglHeaderOptions.filename + '...')
+write('Outputting', wglOptions.filename + '...')
 wglRegistry.setGenerator(GLXWHeaderGenerator(['Windows.h'], 'ANYGL_LOAD_WGL',
 	systemDefines = ['WIN32_LEAN_AND_MEAN'], diagFile = diagFile))
-wglRegistry.apiGen(wglHeaderOptions)
+wglRegistry.apiGen(wglOptions)
+
+wglOptions.filename = os.path.join(args.outDir, 'AnyGLInitWGL.c')
+write('Outputting', wglOptions.filename + '...')
+wglRegistry.apiReset()
+wglRegistry.setGenerator(WGLInitGenerator(diagFile = diagFile))
+wglRegistry.apiGen(wglOptions)
 
 write('Done')
