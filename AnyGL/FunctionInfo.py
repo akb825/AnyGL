@@ -16,15 +16,32 @@
 
 from .reg import *
 
+manualFeatureAliases = \
+{ \
+	'GL_OES_blend_equation_separate': 'OES',
+	'GL_OES_blend_func_separate': 'OES',
+	'GL_OES_blend_subtract': 'OES',
+	'GL_OES_framebuffer_object': 'OES',
+	'GL_EXT_framebuffer_object': 'EXT',
+	'GL_ARB_geometry_shader4': 'ARB',
+	'GL_ARB_robustness': 'ARB',
+	'GL_EXT_robustness': 'EXT',
+	'GL_EXT_blend_func_extended': 'EXT',
+	'GL_EXT_disjoint_timer_query': 'EXT',
+	'GL_EXT_shader_image_load_store': 'EXT'
+}
+
+manualFunctionAliases = \
+{ \
+	'glDeleteTexturesEXT': 'EXT',
+	'glGenTexturesEXT': 'EXT',
+	'glIsTextureEXT': 'EXT',
+}
+
 class FunctionInfo:
-	def __init__(self, cmd, typePrefix = ''):
+	def __init__(self, cmd, typePrefix = '', feature = None):
 		self.proto = cmd.find('proto')
 		self.params = cmd.findall('param')
-		alias = cmd.find('alias')
-		if alias == None:
-			self.alias = None
-		else:
-			self.alias = alias.get('name')
 
 		self.type = None
 		for elem in self.proto:
@@ -32,6 +49,17 @@ class FunctionInfo:
 				text = noneStr(elem.text)
 				tail = noneStr(elem.tail)
 				self.name = noneStr(elem.text)
+
+		alias = cmd.find('alias')
+		if alias == None:
+			self.alias = None
+			if feature:
+				if feature in manualFeatureAliases:
+					self.alias = self.name[:-len(manualFeatureAliases[feature])]
+			if self.name in manualFunctionAliases:
+				self.alias = self.name[:-len(manualFunctionAliases[self.name])]
+		else:
+			self.alias = alias.get('name')
 
 		if self.alias:
 			self.type = typePrefix + 'PFN' + self.alias.upper() + 'PROC'

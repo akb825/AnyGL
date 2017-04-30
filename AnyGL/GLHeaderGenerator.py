@@ -33,6 +33,7 @@ class GLHeaderGenerator(OutputGenerator):
 		self.typeLines = []
 		self.enumLines = []
 		self.functionLines = []
+		self.curFeature = None
 
 	def newLine(self):
 		write('', file = self.outFile)
@@ -86,12 +87,16 @@ class GLHeaderGenerator(OutputGenerator):
 	def beginFeature(self, interface, emit):
 		OutputGenerator.beginFeature(self, interface, emit)
 		if emit:
-			comment = '/* ' + interface.get('name') + ' */'
+			self.curFeature = interface.get('name')
+			comment = '/* ' + self.curFeature + ' */'
 			self.typeLines.append(comment)
+			if interface.tag == 'extension':
+				self.typeLines.append('ANYGL_EXPORT extern int AnyGL_' + self.curFeature[3:] + ';')
 			self.enumLines.append(comment)
 			self.functionLines.append(comment)
 
 	def endFeature(self):
+		self.curFeature = None
 		if self.lastTypeRequire:
 			self.typeLines.append('#endif /* ' + self.lastTypeRequire + ' */')
 			self.lastTypeRequire = None
@@ -186,4 +191,4 @@ class GLHeaderGenerator(OutputGenerator):
 
 	def genCmd(self, cmdinfo, name):
 		OutputGenerator.genCmd(self, cmdinfo, name)
-		self.curFunctions.append(FunctionInfo(cmdinfo.elem))
+		self.curFunctions.append(FunctionInfo(cmdinfo.elem, feature = self.curFeature))
