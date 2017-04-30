@@ -98,14 +98,14 @@ glxRegistry.setGenerator(GLXWHeaderGenerator(['X11/Xlib.h', 'X11/Xutil.h'], 'ANY
 glxRegistry.apiGen(glxHeaderOptions)
 
 glxLoadOptions = GeneratorOptions(
-	filename = os.path.join(args.outDir, 'AnyGLLoadGLX.c'),
+	filename = os.path.join(args.outDir, 'AnyGLInitGLX.c'),
 	apiname = ['glx'],
 	profile = args.profile,
 	addExtensions = '.*',
 	removeExtensions = '(GLX_ARB_get_proc_address)|(GLX_SGI.*)')
 write('Outputting', glxLoadOptions.filename + '...')
 glRegistry.apiReset()
-glxRegistry.setGenerator(GLXLoadGenerator(diagFile = diagFile))
+glxRegistry.setGenerator(GLXInitGenerator(diagFile = diagFile))
 glxRegistry.apiGen(glxLoadOptions)
 
 write('Parsing', wglXml + '...')

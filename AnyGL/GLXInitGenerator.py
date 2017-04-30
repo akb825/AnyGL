@@ -29,7 +29,7 @@ class FeatureInfo:
 		self.isCore = self.version != None and self.version <= 1.4
 		self.functions = []
 
-class GLXLoadGenerator(OutputGenerator):
+class GLXInitGenerator(OutputGenerator):
 	def __init__(self, errFile = sys.stderr, warnFile = sys.stderr, diagFile = sys.stdout):
 		OutputGenerator.__init__(self, errFile, warnFile, diagFile)
 		self.coreFeatures = []
