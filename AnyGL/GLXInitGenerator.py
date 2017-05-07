@@ -85,7 +85,12 @@ class GLXInitGenerator(OutputGenerator):
 						file = self.outFile)
 
 		self.newLine()
-		write('int AnyGL_init(void)\n{', file = self.outFile)
+		write('int AnyGL_initialize(void)\n{', file = self.outFile)
+
+		write('\tstatic int initialized;', file = self.outFile)
+		write('\tif (initialized)', file = self.outFile)
+		write('\t\treturn 1;', file = self.outFile)
+		self.newLine()
 
 		# Core functions load from system pointers.
 		for feature in self.coreFeatures:
@@ -116,7 +121,11 @@ class GLXInitGenerator(OutputGenerator):
 					file = self.outFile)
 			self.newLine()
 
+		write('\tinitialized = 1;', file = self.outFile)
 		write('\treturn 1;\n}', file = self.outFile)
+
+		self.newLine()
+		write('void AnyGL_shutdown(void) {}', file = self.outFile)
 
 		self.newLine()
 		write('#endif /* ANYGL_LOAD */', file = self.outFile)

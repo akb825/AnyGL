@@ -23,7 +23,6 @@ manualFeatureAliases = \
 	'GL_OES_blend_subtract': 'OES',
 	'GL_OES_framebuffer_object': 'OES',
 	'GL_EXT_framebuffer_object': 'EXT',
-	'GL_ARB_geometry_shader4': 'ARB',
 	'GL_ARB_robustness': 'ARB',
 	'GL_EXT_robustness': 'EXT',
 	'GL_EXT_blend_func_extended': 'EXT',
@@ -36,6 +35,9 @@ manualFunctionAliases = \
 	'glDeleteTexturesEXT': 'EXT',
 	'glGenTexturesEXT': 'EXT',
 	'glIsTextureEXT': 'EXT',
+	'glProgramParameteriARB': 'ARB',
+	'glFramebufferTextureARB': 'ARB',
+	'glFramebufferTextureLayerARB': 'ARB'
 }
 
 class FunctionInfo:

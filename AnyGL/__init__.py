@@ -16,5 +16,6 @@ from .reg import *
 from .FunctionPointerGenerator import FunctionPointerGenerator
 from .GLHeaderGenerator import GLHeaderGenerator
 from .GLXInitGenerator import GLXInitGenerator
+from .GLXLoadGenerator import GLXLoadGenerator
 from .GLXWHeaderGenerator import GLXWHeaderGenerator
 from .WGLInitGenerator import WGLInitGenerator

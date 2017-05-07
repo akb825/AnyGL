@@ -70,6 +70,9 @@ class WGLInitGenerator(OutputGenerator):
 			'\tHWND window = NULL;\n' \
 			'\tHDC dc = NULL;\n' \
 			'\tHGLRC context = NULL;\n' \
+			'\tstatic int initialized;\n' \
+			'\tif (initialized)\n' \
+			'\t\treturn 1;\n\n' \
 			'\tif (!wglGetCurrentContext())\n' \
 			'\t{\n' \
 			'\t\tHINSTANCE hinst = GetModuleHandle(NULL);\n' \
@@ -138,6 +141,8 @@ class WGLInitGenerator(OutputGenerator):
 		write('\t\tDestroyWindow(window);', file = self.outFile)
 		write('\t}', file = self.outFile)
 
+		self.newLine()
+		write('\tinitialized = 1;', file = self.outFile)
 		write('\treturn 1;\n}', file = self.outFile)
 
 		self.newLine()

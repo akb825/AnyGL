@@ -66,8 +66,9 @@ def matchAPIProfile(api, profile, elem):
     # Match 'api', if present
     if ('api' in elem.attrib):
         if (api == None):
-            raise UserWarning("No API requested, but 'api' attribute is present with value '" +
-                              elem.get('api') + "'")
+            #raise UserWarning("No API requested, but 'api' attribute is present with value '" +
+            #                  elem.get('api') + "'")
+            return False
         elif (api != elem.get('api')):
             # Requested API doesn't match attribute
             return False
