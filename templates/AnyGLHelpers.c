@@ -1,9 +1,43 @@
 #include "gl.h"
 #include <string.h>
 
+static int majorVersion;
+static int minorVersion;
+
+void AnyGL_getGLVersion(int* major, int* minor, int* es)
+{
+	if (major)
+		*major = majorVersion;
+	if (minor)
+		*minor = minorVersion;
+	if (es)
+		*es = ANYGL_GLES;
+}
+
+int ANyGL_atLeastVersion(int major, int minor, int es)
+{
+	if ((es != 0) != (ANYGL_GLES != 0))
+		return 0;
+
+	if (major > majorVersion || (major == majorVersion && minor >= minorVersion))
+		return 1;
+
+	return 0;
+}
+
+int AnyGL_updateGLVersion(void)
+{
+	if (!ANYGL_SUPPORTED(glGetIntegerv))
+		return 0;
+
+	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+	return 1;
+}
+
 int AnyGL_queryExtension(const char* name)
 {
-	if (glGetStringi)
+	if (ANYGL_SUPPORTED(glGetStringi))
 	{
 		GLint count = 0, i;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &count);
@@ -15,7 +49,7 @@ int AnyGL_queryExtension(const char* name)
 
 		return 0;
 	}
-	else if (glGetString)
+	else if (ANYGL_SUPPORTED(glGetString))
 	{
 		const char* extensions = glGetString(GL_EXTENSIONS);
 		size_t begin = 0, end = 0;

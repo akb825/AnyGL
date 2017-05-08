@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __AnyGLConfig_h_
-#define __AnyGLConfig_h_ 1
+#ifndef __AnyGL_h_
+#define __AnyGL_h_ 1
 
 #include "AnyGLConfig.h"
 
@@ -28,6 +28,16 @@ ANYGL_EXPORT int AnyGL_load(void);
  * @param[out] es 1 if OpenGL ES, 0 if desktop OpenGL.
  */
 ANYGL_EXPORT void AnyGL_getGLVersion(int* major, int* minor, int* es);
+
+/**
+ * @brief Checks to see if the OpenGL version is at least the version provided.
+ * @param major The major version.
+ * @param minor The minor version.
+ * @param es 1 if OpenGL ES, 0 if desktop OpenGL.
+ * @return 1 if the OpenGL version is less than or equal to the major and minor version and es
+ *     matches whether or not OpenGL ES is enabled.
+ */
+ANYGL_EXPORT int AnyGL_atLeastVersion(int major, int minor, int es);
 
 /**
  * @brief Shuts down the AnyGL library, freeing any persistently held resources.

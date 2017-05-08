@@ -58,6 +58,9 @@ class GLHeaderGenerator(OutputGenerator):
 		write('#endif', file = self.outFile)
 		self.newLine()
 
+		write('#define ANYGL_SUPPORTED(func) AnyGL_ ## func', file = self.outFile)
+		self.newLine()
+
 	def endFile(self):
 		write('/* Type declarations */', file = self.outFile)
 		for line in self.typeLines:

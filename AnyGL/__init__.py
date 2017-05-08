@@ -19,3 +19,4 @@ from .GLXInitGenerator import GLXInitGenerator
 from .GLXLoadGenerator import GLXLoadGenerator
 from .GLXWHeaderGenerator import GLXWHeaderGenerator
 from .WGLInitGenerator import WGLInitGenerator
+from .WGLLoadGenerator import WGLLoadGenerator

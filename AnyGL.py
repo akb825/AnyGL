@@ -82,6 +82,12 @@ write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(GLXLoadGenerator(diagFile = diagFile))
 glRegistry.apiGen(glOptions)
 
+glOptions.apiname = ['gl']
+glOptions.filename = os.path.join(args.outDir, 'AnyGLLoadWGL.c')
+write('Outputting', glOptions.filename + '...')
+glRegistry.setGenerator(WGLLoadGenerator(diagFile = diagFile))
+glRegistry.apiGen(glOptions)
+
 write('Parsing', glxXml + '...')
 glxRegistry = Registry()
 glxRegistry.loadElementTree(etree.parse(glxXml))
