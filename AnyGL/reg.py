@@ -916,18 +916,20 @@ class Registry:
     #
     # interface - Element for <version> or <extension>, containing
     #   <require> and <remove> tags
-    # api - string specifying API name being generated
+    # apiList - list of strings specifying API name being generated
     # profile - string specifying API profile being generated
-    def requireAndRemoveFeatures(self, interface, api, profile):
+    def requireAndRemoveFeatures(self, interface, apiList, profile):
         """Process <recquire> and <remove> tags for a <version> or <extension>"""
         # <require> marks things that are required by this version/profile
         for feature in interface.findall('require'):
-            if (matchAPIProfile(api, profile, feature)):
-                self.markRequired(feature, api, True)
+            for api in apiList:
+                if (matchAPIProfile(api, profile, feature)):
+                    self.markRequired(feature, api, True)
         # <remove> marks things that are removed by this version/profile
         for feature in interface.findall('remove'):
-            if (matchAPIProfile(api, profile, feature)):
-                self.markRequired(feature, api, False)
+            for api in apiList:
+                if (matchAPIProfile(api, profile, feature)):
+                    self.markRequired(feature, api, False)
     #
     # generateFeature - generate a single type / enum / command,
     # and all its dependencies as needed.
@@ -1116,7 +1118,7 @@ class Registry:
         for f in features:
             self.gen.logMsg('diag', '*** PASS 1: Tagging required and removed features for',
                 f.name)
-            self.requireAndRemoveFeatures(f.elem, f.getApi(self.genOpts.apiname),
+            self.requireAndRemoveFeatures(f.elem, self.genOpts.apiname,
                 self.genOpts.profile)
         #
         # Pass 2: loop over specified API versions and extensions printing

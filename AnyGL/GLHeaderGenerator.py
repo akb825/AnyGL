@@ -25,9 +25,7 @@ class GLHeaderGenerator(OutputGenerator):
 				'stddef',
 				'inttypes',
 				'GLfloat',
-				'GLdouble',
 				'GLclampf',
-				'GLclampd'
 			]
 		self.curFunctions = []
 		self.typeLines = []
@@ -137,17 +135,21 @@ class GLHeaderGenerator(OutputGenerator):
 		# Types are declared differently between GLES and desktop GL.
 		typeElem = typeinfo.elem
 		curRequire = None
-		requires = typeElem.get('requires')
-		if requires == 'khrplatform':
-			curRequire = 'ANYGL_GLES'
-		elif requires in self.glOnlyTypes:
-			curRequire = '!ANYGL_GLES'
+		# Special cases.
+		name = typeElem.get('name')
+		if name == 'GLuint64EXT':
+			typeElem.text = 'typedef GLuint64 '
 		else:
-			name = typeElem.get('name')
-			if name in self.glesOnlyTypes:
+			requires = typeElem.get('requires')
+			if requires == 'khrplatform':
 				curRequire = 'ANYGL_GLES'
-			elif name in self.glOnlyTypes:
+			elif requires in self.glOnlyTypes:
 				curRequire = '!ANYGL_GLES'
+			else:
+				if name in self.glesOnlyTypes:
+					curRequire = 'ANYGL_GLES'
+				elif name in self.glOnlyTypes:
+					curRequire = '!ANYGL_GLES'
 
 		if curRequire != self.lastTypeRequire:
 			if self.lastTypeRequire:

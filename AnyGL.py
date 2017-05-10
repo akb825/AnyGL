@@ -76,6 +76,12 @@ write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(FunctionPointerGenerator(diagFile = diagFile))
 glRegistry.apiGen(glOptions)
 
+glOptions.apiname = ['gles2']
+glOptions.filename = os.path.join(args.outDir, 'AnyGLLoadEGL.c')
+write('Outputting', glOptions.filename + '...')
+glRegistry.setGenerator(EGLLoadGenerator(diagFile = diagFile))
+glRegistry.apiGen(glOptions)
+
 glOptions.apiname = ['gl']
 glOptions.filename = os.path.join(args.outDir, 'AnyGLLoadGLX.c')
 write('Outputting', glOptions.filename + '...')
