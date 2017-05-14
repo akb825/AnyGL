@@ -15,6 +15,7 @@
 from .reg import *
 from .FunctionPointerGenerator import FunctionPointerGenerator
 from .EGLLoadGenerator import EGLLoadGenerator
+from .FptrLoadGenerator import FptrLoadGenerator
 from .GLHeaderGenerator import GLHeaderGenerator
 from .GLXInitGenerator import GLXInitGenerator
 from .GLXLoadGenerator import GLXLoadGenerator

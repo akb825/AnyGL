@@ -136,5 +136,5 @@ class WGLLoadGenerator(OutputGenerator):
 
 	def genCmd(self, cmdinfo, name):
 		OutputGenerator.genCmd(self, cmdinfo, name)
-		function = FunctionInfo(cmdinfo.elem, feature = self.curFeature.name)
+		function = FunctionInfo(cmdinfo.elem, self.curFeature.name)
 		self.curFeature.functions.append(function)

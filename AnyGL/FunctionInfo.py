@@ -41,7 +41,7 @@ manualFunctionAliases = \
 }
 
 class FunctionInfo:
-	def __init__(self, cmd, typePrefix = '', feature = None):
+	def __init__(self, cmd, feature = None):
 		self.proto = cmd.find('proto')
 		self.params = cmd.findall('param')
 
@@ -64,9 +64,9 @@ class FunctionInfo:
 			self.alias = alias.get('name')
 
 		if self.alias:
-			self.type = typePrefix + 'PFN' + self.alias.upper() + 'PROC'
+			self.type = 'PFNANY' + self.alias.upper() + 'PROC'
 		else:
-			self.type = typePrefix + 'PFN' + self.name.upper() + 'PROC'
+			self.type = 'PFNANY' + self.name.upper() + 'PROC'
 
 	def getArgList(self):
 		n = len(self.params)

@@ -35,19 +35,24 @@
 #define ANYGL_GLES ANYGL_ANDROID || ANYGL_IOS
 #endif
 
+/* #define this to the OpenGL ES version (times 10) to include when loading via function pointer. */
+#ifndef ANYGL_GLES_VERSION
+#define ANYGL_GLES3_VERSION 30
+#endif
+
 /*
  * Libraries for loading OpenGL functions.
- * ANYGL_LOAD_SYSPTR takes the function pointer from the system OpenGL includes.
+ * ANYGL_LOAD_FPTR takes the function pointer from the system OpenGL includes.
  */
-#define ANYGL_LOAD_SYSPTR 0
-#define ANYGL_LOAD_EGL    1
-#define ANYGL_LOAD_WGL    2
-#define ANYGL_LOAD_GLX    3
+#define ANYGL_LOAD_FPTR 0
+#define ANYGL_LOAD_EGL  1
+#define ANYGL_LOAD_WGL  2
+#define ANYGL_LOAD_GLX  3
 
 /* #define this to override the default library. */
 #ifndef ANYGL_LOAD
 #if ANYGL_APPLE
-#	define ANYGL_LOAD ANYGL_LOAD_SYSPTR
+#	define ANYGL_LOAD ANYGL_LOAD_FPTR
 #elif ANYGL_GLES
 #	define ANYGL_LOAD ANYGL_LOAD_EGL
 #elif ANYGL_WINDOWS

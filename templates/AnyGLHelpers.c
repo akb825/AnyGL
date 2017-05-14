@@ -30,9 +30,11 @@ int AnyGL_updateGLVersion(void)
 	if (!ANYGL_SUPPORTED(glGetIntegerv))
 		return 0;
 
+	majorVersion = 0;
+	minorVersion = 0;
 	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
-	return 1;
+	return majorVersion > 0;
 }
 
 int AnyGL_queryExtension(const char* name)
