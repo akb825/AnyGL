@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from .reg import *
+from .DebugGenerator import DebugGenerator
 from .FunctionPointerGenerator import FunctionPointerGenerator
 from .EGLLoadGenerator import EGLLoadGenerator
 from .FptrLoadGenerator import FptrLoadGenerator

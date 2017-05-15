@@ -53,7 +53,7 @@ int AnyGL_queryExtension(const char* name)
 	}
 	else if (ANYGL_SUPPORTED(glGetString))
 	{
-		const char* extensions = glGetString(GL_EXTENSIONS);
+		const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 		size_t begin = 0, end = 0;
 		if (!extensions)
 			return 0;
@@ -72,4 +72,25 @@ int AnyGL_queryExtension(const char* name)
 	}
 	else
 		return 0;
+}
+
+const char* AnyGL_errorString(unsigned int error)
+{
+	switch (error)
+	{
+		case GL_NO_ERROR:
+			return "GL_NO_ERROR";
+		case GL_INVALID_ENUM:
+			return "GL_INVALID_ENUM";
+		case GL_INVALID_VALUE:
+			return "GL_INVALID_VALUE";
+		case GL_INVALID_OPERATION:
+			return "GL_INVALID_OPERATION";
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			return "GL_INVALID_FRAMEBUFFER_OPERATION";
+		case GL_OUT_OF_MEMORY:
+			return "GL_OUT_OF_MEMORY";
+		default:
+			return "UNKNOWN";
+	}
 }

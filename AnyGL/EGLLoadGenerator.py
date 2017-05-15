@@ -59,6 +59,7 @@ class EGLLoadGenerator(OutputGenerator):
 
 		self.write('int AnyGL_updateGLVersion(void);')
 		self.write('int AnyGL_queryExtension(const char* name);')
+		self.write('void AnyGL_initDebug(void);')
 		self.write('static void* gllib;')
 		self.newLine()
 
@@ -129,6 +130,7 @@ class EGLLoadGenerator(OutputGenerator):
 			self.write('\t}')
 
 		self.newLine()
+		self.write('\tAnyGL_initDebug();')
 		self.write('\treturn 1;\n}')
 
 		self.newLine()

@@ -40,17 +40,30 @@ manualFunctionAliases = \
 	'glFramebufferTextureLayerARB': 'ARB'
 }
 
+class ParamInfo:
+	def __init__(self, element):
+		self.group = element.get('group')
+		self.type = noneStr(element.text)
+		typeElem = element.find('ptype')
+		if typeElem != None:
+			self.type += noneStr(typeElem.text) + noneStr(typeElem.tail)
+		self.type = self.type.strip()
+		self.name = noneStr(element.find('name').text)
+
 class FunctionInfo:
 	def __init__(self, cmd, feature = None):
 		self.proto = cmd.find('proto')
 		self.params = cmd.findall('param')
 
 		self.type = None
+		self.returnType = noneStr(self.proto.text)
 		for elem in self.proto:
 			if elem.tag == 'name':
-				text = noneStr(elem.text)
-				tail = noneStr(elem.tail)
 				self.name = noneStr(elem.text)
+				break
+			else:
+				self.returnType += noneStr(elem.text) + noneStr(elem.tail)
+		self.returnType = self.returnType.strip()
 
 		alias = cmd.find('alias')
 		if alias == None:
@@ -71,12 +84,18 @@ class FunctionInfo:
 	def getArgList(self):
 		n = len(self.params)
 		decl = '('
-		for i in range(0, n):
+		for i in range(n):
 			decl += str().join([t for t in self.params[i].itertext()])
 			if i < n - 1:
 				decl += ', '
 		decl += ')'
 		return decl
+
+	def getParamList(self):
+		params = []
+		for param in self.params:
+			params.append(ParamInfo(param))
+		return params
 
 	def getTypeDecl(self):
 		decl = 'typedef ' + noneStr(self.proto.text)

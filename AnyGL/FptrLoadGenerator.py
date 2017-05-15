@@ -83,6 +83,7 @@ class FptrLoadGenerator(OutputGenerator):
 
 		self.write('int AnyGL_updateGLVersion(void);')
 		self.write('int AnyGL_queryExtension(const char* name);')
+		self.write('void AnyGL_initDebug(void);')
 		self.newLine()
 
 	def endFile(self):
@@ -142,6 +143,7 @@ class FptrLoadGenerator(OutputGenerator):
 			self.write('#endif', '/*', feature.name, '*/')
 			self.newLine()
 
+		self.write('\tAnyGL_initDebug();')
 		self.write('\treturn 1;\n}')
 
 		self.newLine()

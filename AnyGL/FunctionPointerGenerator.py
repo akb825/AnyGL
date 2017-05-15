@@ -39,7 +39,7 @@ class FunctionPointerGenerator(OutputGenerator):
 		if emit:
 			self.curFeature = interface.get('name')
 			if interface.tag == 'extension':
-				self.write('ANYGL_EXPORT int', 'AnyGL_' + self.curFeature[3:] + ';')
+				self.write('ANYGL_EXPORT int', 'Any' + self.curFeature + ';')
 
 	def endFeature(self):
 		self.curFeature = None
@@ -47,6 +47,6 @@ class FunctionPointerGenerator(OutputGenerator):
 
 	def genCmd(self, cmdinfo, name):
 		OutputGenerator.genCmd(self, cmdinfo, name)
-		function = FunctionInfo(cmdinfo.elem, feature = self.curFeature)
+		function = FunctionInfo(cmdinfo.elem, self.curFeature)
 		if not function.alias:
 			self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')

@@ -112,7 +112,9 @@ class GroupInfo(BaseInfo):
     """Represents the state of a registry enumerant group"""
     def __init__(self, elem):
         BaseInfo.__init__(self, elem)
-        self.enums = {}
+        self.enums = []
+        for enum in elem.findall('enum'):
+            self.enums.append(enum.get('name'))
 
 # EnumInfo - registry information about an enum
 #   type - numeric type of the value of the <enum> tag

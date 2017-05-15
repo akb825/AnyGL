@@ -70,6 +70,16 @@ class GLHeaderGenerator(OutputGenerator):
 		self.newLine()
 
 		self.write('#define ANYGL_SUPPORTED(func) AnyGL_ ## func')
+
+		self.newLine()
+		self.write('ANYGL_EXPORT void AnyGL_setLastCallsite(const char* file, ' \
+			'const char* function, unsigned int line);')
+		self.write('#if ANYGL_ALLOW_DEBUG')
+		self.write('#define ANYGL_CALL(func) (AnyGL_setLastCallsite(__FILE__, __FUNCTION__,' \
+			'__LINE__), (func))')
+		self.write('#else')
+		self.write('#define ANYGL_CALL(func) (func)')
+		self.write('#endif')
 		self.newLine()
 
 	def endFile(self):
