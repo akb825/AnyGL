@@ -32,6 +32,9 @@ options.add_option('-e', '--extensions', dest = 'extensions',
 	help = 'Regular expression for the extensions to include. ' \
 	'Defaults to the ARB, EXT, OES and KHR extensions.',
 	default = '(GL_ARB_.*)|(GL_EXT_.*)|(GL_OES_.*)|(GL_KHR_*)')
+options.add_option('-r', '--remove-extension', dest = 'removeExt',
+	help = 'Regular expression for the extensions to remove.',
+	default = None)
 options.add_option('-v', '--verbose', dest = 'verbose', help = 'Verbose output.', default = False,
 	action = 'store_true')
 (args, argv) = options.parse_args()
@@ -66,7 +69,8 @@ glOptions = GeneratorOptions(
 	filename = os.path.join(args.outDir, 'gl.h'),
 	apiname = apiname,
 	profile = 'compatibility',
-	addExtensions = args.extensions)
+	addExtensions = args.extensions,
+	removeExtensions = args.removeExt)
 write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(GLHeaderGenerator(diagFile = diagFile))
 glRegistry.apiGen(glOptions)
