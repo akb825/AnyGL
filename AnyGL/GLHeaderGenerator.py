@@ -69,7 +69,7 @@ class GLHeaderGenerator(OutputGenerator):
 		self.write('#endif')
 		self.newLine()
 
-		self.write('#define ANYGL_SUPPORTED(func) AnyGL_ ## func')
+		self.write('#define ANYGL_SUPPORTED(func) (AnyGL_ ## func != 0)')
 
 		self.newLine()
 		self.write('ANYGL_EXPORT void AnyGL_setLastCallsite(const char* file, ' \

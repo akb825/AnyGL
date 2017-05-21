@@ -55,6 +55,12 @@ class WGLInitGenerator(OutputGenerator):
 		self.newLine()
 
 	def endFile(self):
+		# Function pointers.
+		for feature in self.extensionFeatures:
+			for function in feature.functions:
+				self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')
+		self.newLine()
+
 		self.write('int AnyGL_initialize(void)\n{')
 
 		# May need to create a dummy context in order to load the exensions.

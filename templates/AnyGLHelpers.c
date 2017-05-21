@@ -14,7 +14,7 @@ void AnyGL_getGLVersion(int* major, int* minor, int* es)
 		*es = ANYGL_GLES;
 }
 
-int ANyGL_atLeastVersion(int major, int minor, int es)
+int AnyGL_atLeastVersion(int major, int minor, int es)
 {
 	if ((es != 0) != (ANYGL_GLES != 0))
 		return 0;

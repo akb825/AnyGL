@@ -57,6 +57,15 @@ class GLXInitGenerator(OutputGenerator):
 		self.newLine()
 
 	def endFile(self):
+		# Function pointers.
+		for feature in self.coreFeatures:
+			for function in feature.functions:
+				self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')
+		for feature in self.extensionFeatures:
+			for function in feature.functions:
+				self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')
+		self.newLine()
+
 		self.write('int AnyGL_initialize(void)\n{')
 
 		self.write('\tstatic int initialized;')

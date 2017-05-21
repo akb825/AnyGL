@@ -16,8 +16,8 @@ The following software is required to run AnyGL:
 These dependencies are only required to run AnyGL to generate the APIs. There are no requirements other than a C compiler and a platform that supports OpenGL to use the generated code. The following libraries will need to be linked:
 
 * `OpenGL`
-* `dl` when loading with `EGL` or `GLX`.
-* `X11` when loading with `GLX`.
+* `dl` when loading with `EGL`.
+* `X11` and `GLX` when loading with `GLX`.
 * `EGL` when loading with `EGL`.
 
 # Usage
@@ -36,6 +36,8 @@ The `AnyGL.py` python script can be run to generate the AnyGL headers and source
 * `gl.h`: OpenGL header. This isncludes all of the OpenGL types and functions.
 * `glx.h`: GLX header for X11 integration with OpenGL, including extensions.
 * `wgl.h`: WGL header for Windows integration with OpenGL, including extensions.
+
+When checking if a function is supported, you may use the `ANYGL_SUPPORTED()` macro, passing in the function name. Global variables are provided to determine what extensions are available on the current OpenGL version. For example, to check if `GL_ARB_draw_indirect` is supported, you can check the variable `AnyGL_ARB_draw_indirect`. This shouldn't be confused with the `ANYGL_ARB_draw_indirect` macro, is defined if AnyGL's `gl.h` header declared the extension. (useful when combinging the system `gl.h` with AnyGL's `gl.h`)
 
 ## Debugging
 

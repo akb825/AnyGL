@@ -80,7 +80,11 @@ class GLXWHeaderGenerator(OutputGenerator):
 		self.extension = interface.tag == 'extension'
 		if emit:
 			self.curFeature = interface.get('name')
-			self.write('#ifndef', self.curFeature)
+			# Special case for GLX version 1.0.
+			if self.curFeature == 'GLX_VERSION_1_0':
+				self.write('#ifndef GLX_EXTENSION_NAME')
+			else:
+				self.write('#ifndef', self.curFeature)
 			self.write('#define', self.curFeature, '1')
 			self.write('#define ANY' + self.curFeature, '1')
 			self.newLine()
