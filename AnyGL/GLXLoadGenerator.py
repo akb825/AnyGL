@@ -59,7 +59,8 @@ class GLXLoadGenerator(OutputGenerator):
 
 	def endFile(self):
 		self.write('int AnyGL_load(void)\n{')
-		self.write('\tif (!glXGetCurrentContext || !glXGetProcAddress || !glXGetCurrentContext())')
+		self.write('\tif (!ANYGL_SUPPORTED(glXGetCurrentContext) || ' \
+			'!ANYGL_SUPPORTED(glXGetProcAddress) || !glXGetCurrentContext())')
 		self.write('\t\treturn 0;')
 
 		# Load these feaures first. This includes glGetIntegerv to get the OpenGL version.

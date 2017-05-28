@@ -162,10 +162,20 @@ class GLHeaderGenerator(OutputGenerator):
 
 			self.write('#ifndef ANYGL_NO_FUNCTION_DEFINES')
 			for function in feature.functions:
+				params = '('
+				paramList = function.getParamList()
+				for param in paramList:
+					if param != paramList[0]:
+						params += ', '
+					params += param.name
+				params += ')'
+
 				if function.alias:
-					self.write('#define', function.name, 'AnyGL_' + function.alias)
+					self.write('#define', function.name + params, 'ANYGL_CALL(AnyGL_' + \
+						function.alias + ')' + params)
 				else:
-					self.write('#define', function.name, 'AnyGL_' + function.name)
+					self.write('#define', function.name + params, 'ANYGL_CALL(AnyGL_' + \
+						function.name + ')' + params)
 			self.write('#endif /* ANYGL_NO_FUNCTION_DEFINES */')
 			self.newLine()
 

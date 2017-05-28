@@ -114,10 +114,18 @@ class GLXWHeaderGenerator(OutputGenerator):
 				# Function defines.
 				self.write('#ifndef ANYGL_NO_FUNCTION_DEFINES')
 				for function in self.curFunctions:
+					params = '('
+					paramList = function.getParamList()
+					for param in paramList:
+						if param != paramList[0]:
+							params += ', '
+						params += param.name
+					params += ')'
+
 					name = function.name
 					if function.alias:
 						name = function.alias
-					self.write('#define', function.name, 'AnyGL_' + name)
+					self.write('#define', function.name + params, 'AnyGL_' + name + params)
 				self.write('#endif /* ANYGL_NO_FUNCTION_DEFINES */')
 			else:
 				for function in self.curFunctions:
