@@ -30,8 +30,8 @@ options.add_option('-t', '--template-dir', dest='templateDir',
 	default = 'templates')
 options.add_option('-e', '--extensions', dest = 'extensions',
 	help = 'Regular expression for the extensions to include. ' \
-	'Defaults to the ARB, EXT, OES and KHR extensions.',
-	default = '(GL_ARB_.*)|(GL_EXT_.*)|(GL_OES_.*)|(GL_KHR_*)')
+	'Defaults to the ARB, EXT, OES, KHR, and IMG PVRTC extensions.',
+	default = '(GL_ARB_.*)|(GL_EXT_.*)|(GL_OES_.*)|(GL_KHR_*)|(GL_IMG_texture_compression_pvrtc.*)')
 options.add_option('-r', '--remove-extension', dest = 'removeExt',
 	help = 'Regular expression for the extensions to remove.',
 	default = None)
