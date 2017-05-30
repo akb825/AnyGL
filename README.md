@@ -37,7 +37,9 @@ The `AnyGL.py` python script can be run to generate the AnyGL headers and source
 * `glx.h`: GLX header for X11 integration with OpenGL, including extensions.
 * `wgl.h`: WGL header for Windows integration with OpenGL, including extensions.
 
-When checking if a function is supported, you may use the `ANYGL_SUPPORTED()` macro, passing in the function name. Global variables are provided to determine what extensions are available on the current OpenGL version. For example, to check if `GL_ARB_draw_indirect` is supported, you can check the variable `AnyGL_ARB_draw_indirect`. This shouldn't be confused with the `ANYGL_ARB_draw_indirect` macro, is defined if AnyGL's `gl.h` header declared the extension. (useful when combinging the system `gl.h` with AnyGL's `gl.h`)
+When checking if a function is supported, you may use the `ANYGL_SUPPORTED()` macro, passing in the function name. Global variables are provided to determine what extensions are available on the current OpenGL version. For example, to check if `GL_ARB_draw_indirect` is supported, you can check the variable `AnyGL_ARB_draw_indirect`. This shouldn't be confused with the `ANYGL_ARB_draw_indirect` macro, is defined if AnyGL's `gl.h` header declared the extension as opposed to the system `gl.h`. (useful when combinging the system `gl.h` with AnyGL's `gl.h`)
+
+> **Note:** OpenGL ES 2.0 uses the `GL_HALF_FLOAT_OES` enum, which is a different value from `GL_HALF_FLOAT`, used for all other OpenGL versions, including OpenGL ES 3.0. To work around this, the `AnyGL_HALF_FLOAT` variable is defined, which will have the value `GL_HALF_FLOAT_OES` after loading OpenGL ES 2.0 and `GL_HALF_FLOAT` otherwise.
 
 ## Debugging
 

@@ -107,6 +107,13 @@ class FptrLoadGenerator(OutputGenerator):
 		
 		if self.isGles:
 			glEsBool = '1'
+
+			# GL_HALF_FLOAT workaround
+			self.write('\tif (AnyGL_atLeastVersion(3, 0, true))')
+			self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT;')
+			self.write('\telse')
+			self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT_OES;')
+			self.newLine()
 		else:
 			glEsBool = '0'
 

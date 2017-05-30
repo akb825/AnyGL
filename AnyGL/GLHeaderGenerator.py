@@ -146,6 +146,10 @@ class GLHeaderGenerator(OutputGenerator):
 			self.write('#endif /*', feature.name, '*/')
 			self.newLine()
 
+		self.write('/* Workaround for GL_HALF_FLOAT_OES */')
+		self.write('ANYGL_EXPORT extern GLenum AnyGL_HALF_FLOAT;')
+		self.newLine()
+
 		self.write('/* Function declarations */')
 		for feature in self.features:
 			self.write('/*', feature.name, '*/')
@@ -232,23 +236,13 @@ class GLHeaderGenerator(OutputGenerator):
 	def genEnum(self, enuminfo, name):
 		OutputGenerator.genEnum(self, enuminfo, name)
 
-		# Special case: GL_HALF_FLOAT_OES is a different value from GL_HALF_FLOAT
-		require = None
-		glOnly = name == 'GL_HALF_FLOAT'
-		if glOnly:
-			require = '!ANYGL_GLES'
-
 		s = '#define ' + name.ljust(33) + ' ' + enuminfo.elem.get('value')
 		# Handle non-integer 'type' fields by using it as the C value suffix
 		t = enuminfo.elem.get('type')
 		if (t != '' and t != 'i'):
 			s += enuminfo.type
 
-		# Special case for GL_HALF_FLOAT_OES
-		if name == 'GL_HALF_FLOAT_OES':
-			require = 'ANYGL_GLES'
-
-		self.curFeature.enums.append(ElementInfo(s, require))
+		self.curFeature.enums.append(ElementInfo(s, None))
 
 	def genCmd(self, cmdinfo, name):
 		OutputGenerator.genCmd(self, cmdinfo, name)
