@@ -40,6 +40,7 @@ class WGLInitGenerator(OutputGenerator):
 		self.newLine()
 		self.write('#if ANYGL_LOAD == ANYGL_LOAD_WGL')
 		self.write('#define WIN32_LEAN_AND_MEAN')
+		self.write('#undef APIENTRY')
 		self.write('#include <Windows.h>')
 		self.write('#include <GL/gl.h>')
 		self.newLine()
@@ -80,7 +81,7 @@ class WGLInitGenerator(OutputGenerator):
 			'\tif (!wglGetCurrentContext())\n' \
 			'\t{\n' \
 			'\t\tHINSTANCE hinst = GetModuleHandle(NULL);\n' \
-			'\t\tWNDCLASSA windowClass = {};\n' \
+			'\t\tWNDCLASSA windowClass = {0};\n' \
 			'\t\tPIXELFORMATDESCRIPTOR pfd =\n' \
 			'\t\t{\n' \
 			'\t\t\tsizeof(PIXELFORMATDESCRIPTOR),\n' \
@@ -103,7 +104,7 @@ class WGLInitGenerator(OutputGenerator):
 			'\t\tunsigned int pixelFormat;\n\n' \
 			'\t\twindowClass.style = CS_OWNDC;\n' \
 			'\t\twindowClass.lpfnWndProc = &DefWindowProc;\n' \
-			'\t\twindowClass.hInstance = hisnt;\n' \
+			'\t\twindowClass.hInstance = hinst;\n' \
 			'\t\twindowClass.lpszClassName = "AnyGLDummyWindow";\n' \
 			'\t\tif (!RegisterClassA(&windowClass))\n' \
 			'\t\t\treturn 0;\n\n' \
@@ -115,14 +116,14 @@ class WGLInitGenerator(OutputGenerator):
 			'\t\tpixelFormat = ChoosePixelFormat(dc, &pfd);\n' \
 			'\t\tif (!pixelFormat || !SetPixelFormat(dc, pixelFormat, &pfd))\n' \
 			'\t\t{\n' \
-			'\t\t\tReleaseDC(dc);\n' \
+			'\t\t\tReleaseDC(window, dc);\n' \
 			'\t\t\tDestroyWindow(window);\n' \
 			'\t\t\treturn 0;\n' \
 			'\t\t}\n\n' \
 			'\t\tcontext = wglCreateContext(dc);\n' \
 			'\t\tif (!context || !wglMakeCurrent(dc, context))\n' \
 			'\t\t{\n' \
-			'\t\t\tReleaseDC(dc);\n' \
+			'\t\t\tReleaseDC(window, dc);\n' \
 			'\t\t\tDestroyWindow(window);\n' \
 			'\t\t\treturn 0;\n' \
 			'\t\t}\n' \
@@ -141,7 +142,7 @@ class WGLInitGenerator(OutputGenerator):
 		self.write('\t{')
 		self.write('\t\twglMakeCurrent(NULL, NULL);')
 		self.write('\t\twglDeleteContext(context);')
-		self.write('\t\tReleaseDC(dc);')
+		self.write('\t\tReleaseDC(window, dc);')
 		self.write('\t\tDestroyWindow(window);')
 		self.write('\t}')
 

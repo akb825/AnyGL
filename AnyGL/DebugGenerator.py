@@ -56,8 +56,13 @@ class DebugGenerator(OutputGenerator):
 		self.write('#ifndef _CRT_NONSTDC_NO_DEPRECATE')
 		self.write('#define _CRT_NONSTDC_NO_DEPRECATE')
 		self.write('#endif')
+		self.write('#undef APIENTRY')
 		self.write('#include <Windows.h>')
+		self.write('#undef near')
+		self.write('#undef far')
+		self.write('#if _MSC_VER < 1400')
 		self.write('#define snprintf _snprintf')
+		self.write('#endif')
 		self.write('#endif')
 		self.write('#include <stdio.h>')
 		self.write('#include <string.h>')
@@ -160,7 +165,7 @@ class DebugGenerator(OutputGenerator):
 			return param.name
 
 	def outputDebugFunction(self, function, groups):
-		self.write('static APIENTRY', function.returnType, 'debug_' + function.name + \
+		self.write('static', function.returnType, 'APIENTRY debug_' + function.name + \
 			function.getArgList())
 		self.write('{')
 
@@ -222,7 +227,7 @@ class DebugGenerator(OutputGenerator):
 			for param in function.getParamList():
 				if param.group:
 					usedGroups.add(param.group)
-		
+
 		self.outputEnums('Any', self.enums)
 		groups = set()
 		for groupName, group in self.registry.groupdict.items():
@@ -240,7 +245,7 @@ class DebugGenerator(OutputGenerator):
 		self.write('\tint length = snprintf(buffer, PRINT_BUFFER_SIZE, "%s(%u) %s(): [%s] %s\\n", ' \
 			'file, line, function, AnyGL_errorString(glError), glFunction);')
 		self.write('\tif (length >= 0 && length < PRINT_BUFFER_SIZE)\n\t{')
-		self.write('\t\twrite(stderr, buffer);')
+		self.write('\t\tfwrite(buffer, sizeof(char), strlen(buffer), stderr);')
 		self.write('\t\tOutputDebugStringA(buffer);')
 		self.write('\t}')
 		self.write('\telse')

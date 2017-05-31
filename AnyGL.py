@@ -126,8 +126,8 @@ glxOptions = GeneratorOptions(
 	addExtensions = '.*',
 	removeExtensions = '(GLX_ARB_get_proc_address)|(GLX_SGI.*)')
 write('Outputting', glxOptions.filename + '...')
-glxRegistry.setGenerator(GLXWHeaderGenerator(['X11/Xlib.h', 'X11/Xutil.h'], 'ANYGL_LOAD_GLX',
-	extensionsOnly = False, diagFile = diagFile))
+glxRegistry.setGenerator(GLXWHeaderGenerator('ANYGL_LOAD_GLX', ['#include <X11/Xlib.h>',
+	'#include <X11/Xutil.h>'], extensionsOnly = False, diagFile = diagFile))
 glxRegistry.apiGen(glxOptions)
 
 glxOptions.filename = os.path.join(args.outDir, 'AnyGLInitGLX.c')
@@ -146,8 +146,9 @@ wglOptions = GeneratorOptions(
 	emitversions = None,
 	addExtensions = '.*')
 write('Outputting', wglOptions.filename + '...')
-wglRegistry.setGenerator(GLXWHeaderGenerator(['Windows.h'], 'ANYGL_LOAD_WGL',
-	systemDefines = ['WIN32_LEAN_AND_MEAN'], diagFile = diagFile))
+wglRegistry.setGenerator(GLXWHeaderGenerator('ANYGL_LOAD_WGL', ['#define WIN32_LEAN_AND_MEAN',
+	'#ifndef _WINDOWS_', '#undef APIENTRY', '#endif', '#include <Windows.h>'],
+	diagFile = diagFile))
 wglRegistry.apiGen(wglOptions)
 
 wglOptions.filename = os.path.join(args.outDir, 'AnyGLInitWGL.c')
