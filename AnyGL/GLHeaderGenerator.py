@@ -69,6 +69,12 @@ class GLHeaderGenerator(OutputGenerator):
 		self.write('#endif')
 		self.newLine()
 
+		self.write('#if defined(__clang__)')
+		self.write('#pragma GCC diagnostic push')
+		self.write('#pragma GCC diagnostic ignored "-Wmacro-redefined"')
+		self.write('#endif')
+		self.newLine()
+
 		self.write('#define ANYGL_SUPPORTED(func) (AnyGL_ ## func != 0)')
 
 		self.newLine()
@@ -182,6 +188,11 @@ class GLHeaderGenerator(OutputGenerator):
 						function.name + ')' + params)
 			self.write('#endif /* ANYGL_NO_FUNCTION_DEFINES */')
 			self.newLine()
+
+		self.write('#if defined(__GNUC__) || defined(__clang__)')
+		self.write('#pragma GCC diagnostic pop')
+		self.write('#endif')
+		self.newLine()
 
 		self.write('#ifdef __cplusplus')
 		self.write('}')

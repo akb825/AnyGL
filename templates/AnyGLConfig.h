@@ -8,7 +8,7 @@
 #	define ANYGL_ANDROID 1
 #elif defined(__APPLE__)
 #	define ANYGL_APPLE 1
-#	include "TargetConditionals"
+#	include "TargetConditionals.h"
 #	if TARGET_OS_IPHONE
 #		define ANYGL_IOS 1
 #	endif
@@ -35,9 +35,14 @@
 #define ANYGL_GLES ANYGL_ANDROID || ANYGL_IOS
 #endif
 
+/* #define this to the OpenGL version (times 10) to include when loading via function pointer. */
+#ifndef ANYGL_GL_VERSION
+#define ANYGL_GL_VERSION 33
+#endif
+
 /* #define this to the OpenGL ES version (times 10) to include when loading via function pointer. */
 #ifndef ANYGL_GLES_VERSION
-#define ANYGL_GLES3_VERSION 30
+#define ANYGL_GLES_VERSION 30
 #endif
 
 /*

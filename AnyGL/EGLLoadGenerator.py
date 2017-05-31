@@ -95,7 +95,7 @@ class EGLLoadGenerator(OutputGenerator):
 
 		# GL_HALF_FLOAT workaround
 		self.newLine()
-		self.write('\tif (AnyGL_atLeastVersion(3, 0, true))')
+		self.write('\tif (AnyGL_atLeastVersion(3, 0, 1))')
 		self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT;')
 		self.write('\telse')
 		self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT_OES;')
