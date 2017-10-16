@@ -182,13 +182,13 @@ class DebugGenerator(OutputGenerator):
 			formatArgs += ', ' + self.getFormatArg(params[i], groups)
 		formatStr += ')'
 		if function.returnType == 'void':
-			self.write('\t' + function.name + '(' + paramForward + ');')
+			self.write('\t' + 'default_' + function.name + '(' + paramForward + ');')
 		else:
 			self.write('\t' + function.returnType, 'retVal =', 'default_' + function.name + '(' + \
 				paramForward + ');')
 
 		self.write('\tif (checkErrors)\n\t{')
-		self.write('\t\tGLenum _error = glGetError();')
+		self.write('\t\tGLenum _error = AnyGL_glGetError();')
 		self.write('\t\tif (_error != GL_NO_ERROR)\n\t\t{')
 		self.write('\t\t\tchar _buffer[PRINT_BUFFER_SIZE];')
 		self.write('\t\t\tint _length = snprintf(_buffer, PRINT_BUFFER_SIZE,',
