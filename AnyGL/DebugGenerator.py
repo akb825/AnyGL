@@ -126,7 +126,7 @@ class DebugGenerator(OutputGenerator):
 			(param.group and param.group in groups and ptype[-1] != '*'):
 			return '%s'
 		elif ptype[-1] == '*' or (len(ptype) > 4 and ptype[-4:] == 'PROC') or \
-			ptype == 'GLsync' or ptype == 'GLeglImageOES':
+			ptype == 'GLsync' or ptype == 'GLeglImageOES' or ptype == 'GLeglClientBufferEXT':
 			return '%p'
 		elif ptype == 'GLbyte' or ptype == 'GLshort' or ptype == 'GLint' or ptype == 'GLsizei':
 			return '%i'
@@ -225,7 +225,7 @@ class DebugGenerator(OutputGenerator):
 		usedGroups = set()
 		for function in self.functions:
 			for param in function.getParamList():
-				if param.group:
+				if (param.type == 'GLenum' or param.type == 'GLboolean') and param.group:
 					usedGroups.add(param.group)
 
 		self.outputEnums('Any', self.enums)

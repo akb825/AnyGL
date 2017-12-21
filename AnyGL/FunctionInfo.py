@@ -35,6 +35,7 @@ manualFunctionAliases = \
 	'glDeleteTexturesEXT': 'EXT',
 	'glGenTexturesEXT': 'EXT',
 	'glIsTextureEXT': 'EXT',
+	'glClipControlEXT': 'EXT',
 	'glProgramParameteriARB': 'ARB',
 	'glFramebufferTextureARB': 'ARB',
 	'glFramebufferTextureLayerARB': 'ARB'
@@ -66,7 +67,7 @@ class FunctionInfo:
 		self.returnType = self.returnType.strip()
 
 		alias = cmd.find('alias')
-		if alias == None:
+		if alias == None or alias.get('name') == self.name:
 			self.alias = None
 			if feature:
 				if feature in manualFeatureAliases:
