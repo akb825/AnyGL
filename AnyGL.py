@@ -85,8 +85,14 @@ write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(DebugGenerator(glRegistry, diagFile = diagFile))
 glRegistry.apiGen(glOptions)
 
+glOptions.apiname = ['gl']
+glOptions.filename = os.path.join(args.outDir, 'AnyGLLoadEGL_GL.c')
+write('Outputting', glOptions.filename + '...')
+glRegistry.setGenerator(EGLLoadGenerator(diagFile = diagFile))
+glRegistry.apiGen(glOptions)
+
 glOptions.apiname = ['gles2']
-glOptions.filename = os.path.join(args.outDir, 'AnyGLLoadEGL.c')
+glOptions.filename = os.path.join(args.outDir, 'AnyGLLoadEGL_GLES.c')
 write('Outputting', glOptions.filename + '...')
 glRegistry.setGenerator(EGLLoadGenerator(diagFile = diagFile))
 glRegistry.apiGen(glOptions)

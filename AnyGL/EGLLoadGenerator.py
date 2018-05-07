@@ -16,7 +16,7 @@ from .reg import *
 from .FunctionInfo import *
 
 class FeatureInfo:
-	def __init__(self, interface):
+	def __init__(self, interface, firstVersion):
 		self.name = interface.get('name')
 		self.extension = interface.tag == 'extension'
 		if self.extension:
@@ -24,7 +24,7 @@ class FeatureInfo:
 		else:
 			self.version = interface.get('number')
 
-		self.loadFirst = self.version != None and self.version == "2.0"
+		self.loadFirst = self.version != None and self.version == firstVersion
 		self.functions = []
 
 class EGLLoadGenerator(OutputGenerator):
@@ -43,13 +43,13 @@ class EGLLoadGenerator(OutputGenerator):
 
 	def beginFile(self, genOpts):
 		OutputGenerator.beginFile(self, genOpts)
+		self.gles = len(genOpts.apiname) == 1 and genOpts.apiname[0] == 'gles2'
+
 		self.write('#include "AnyGL.h"')
 		self.write('#include "gl.h"')
 		self.newLine()
-		self.write('#if ANYGL_LOAD == ANYGL_LOAD_EGL')
-		self.write('#if !ANYGL_GLES')
-		self.write('#error EGL loading currently requires OpenGL ES')
-		self.write('#endif')
+		self.write('#if ANYGL_LOAD == ANYGL_LOAD_EGL && ANYGL_GLES == ' +
+			('1' if self.gles else '0'))
 		self.write('#include <EGL/egl.h>')
 		self.write('#include <dlfcn.h>')
 		self.newLine()
@@ -65,7 +65,10 @@ class EGLLoadGenerator(OutputGenerator):
 
 		self.write('int AnyGL_initialize(void)\n{')
 		self.write('\tif (gllib)\n\t\treturn 1;')
-		self.write('\tgllib = dlopen("libGLESv2.so", RTLD_LAZY);')
+		if self.gles:
+			self.write('\tgllib = dlopen("libGLESv2.so", RTLD_LAZY);')
+		else:
+			self.write('\tgllib = dlopen("libOpenGL.so", RTLD_LAZY);')
 		self.write('\treturn gllib != NULL;\n}')
 		self.newLine()
 
@@ -94,18 +97,20 @@ class EGLLoadGenerator(OutputGenerator):
 		self.write('\t\treturn 0;')
 
 		# GL_HALF_FLOAT workaround
-		self.newLine()
-		self.write('\tif (AnyGL_atLeastVersion(3, 0, 1))')
-		self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT;')
-		self.write('\telse')
-		self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT_OES;')
+		if self.gles:
+			self.newLine()
+			self.write('\tif (AnyGL_atLeastVersion(3, 0, 1))')
+			self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT;')
+			self.write('\telse')
+			self.write('\t\tAnyGL_HALF_FLOAT = GL_HALF_FLOAT_OES;')
 
 		# Load the core features.
+		glesBool = '1' if self.gles else '0'
 		for feature in self.coreFeatures:
 			self.newLine()
 			self.write('\t/*', feature.name, '*/')
 			self.write('\tif (AnyGL_atLeastVersion(' + feature.version[0] + ',', feature.version[2] + \
-				', 1))\n\t{')
+				', ' + glesBool + '))\n\t{')
 			for function in feature.functions:
 				self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 					')dlsym(gllib, "' + function.name + '");')
@@ -148,7 +153,7 @@ class EGLLoadGenerator(OutputGenerator):
 	def beginFeature(self, interface, emit):
 		OutputGenerator.beginFeature(self, interface, emit)
 		if emit:
-			self.curFeature = FeatureInfo(interface)
+			self.curFeature = FeatureInfo(interface, '2.0' if self.gles else '1.0')
 
 	def endFeature(self):
 		if self.curFeature:

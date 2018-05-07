@@ -41,6 +41,16 @@ When checking if a function is supported, you may use the `ANYGL_SUPPORTED()` ma
 
 > **Note:** OpenGL ES 2.0 uses the `GL_HALF_FLOAT_OES` enum, which is a different value from `GL_HALF_FLOAT`, used for all other OpenGL versions, including OpenGL ES 3.0. To work around this, the `AnyGL_HALF_FLOAT` variable is defined, which will have the value `GL_HALF_FLOAT_OES` after loading OpenGL ES 2.0 and `GL_HALF_FLOAT` otherwise.
 
+## Using in applications
+
+AnyGL manages loading of the OpenGL functions, but the application is responsible for management of the OpenGL contexts themselves. The flow of control within the application should be:
+
+1. Call `AnyGL_initialize()` at application startup.
+2. Create a context and bind it.
+3. Call `AnyGL_load()` to load the OpenGL functions.
+4. Optionally call `AnyGL_setDebugEnabled()` to toggle debugging. See next section for more information.
+5. When the application is closed, call `AnyGL_shutdown()`.
+
 ## Debugging
 
 When `ANYGL_ENABLE_DEBUG` is defined to 1 (default when `NDEBUG` isn't defined), the debugging feature may be enabled. Once you call `AnyGL_setDebugEnabled(1)` the OpenGL function pointers will be replaced with debug versions. These will check if any OpenGL occurred after the function was called, and if so will call the error function with a string version of the call, including the values of the parameters. (such as resolving enum names) By default, this will print to the console.
