@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 #
 # Copyright 2017 Aaron Barany
 #

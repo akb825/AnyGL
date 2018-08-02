@@ -45,7 +45,7 @@ class WGLInitGenerator(OutputGenerator):
 		self.write('#include <GL/gl.h>')
 		self.newLine()
 
-		self.write('#define ANYGL_NO_FUNCTION_DEFINES')
+		self.write('#define ANYGL_NO_DEFINES')
 		self.write('#include "wgl.h"')
 		self.newLine()
 

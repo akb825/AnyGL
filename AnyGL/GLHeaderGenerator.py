@@ -136,6 +136,7 @@ class GLHeaderGenerator(OutputGenerator):
 		self.newLine()
 
 		self.write('/* Enum definitions */')
+		self.write('#ifndef ANYGL_NO_DEFINES')
 		for feature in self.features:
 			if not feature.enums:
 				continue
@@ -154,6 +155,7 @@ class GLHeaderGenerator(OutputGenerator):
 				self.write('#endif')
 			self.write('#endif /*', feature.name, '*/')
 			self.newLine()
+		self.write('#endif /* ANYGL_NO_DEFINES */')
 
 		self.write('/* Workaround for GL_HALF_FLOAT_OES */')
 		self.write('ANYGL_EXPORT extern GLenum AnyGL_HALF_FLOAT;')
@@ -173,7 +175,7 @@ class GLHeaderGenerator(OutputGenerator):
 						'AnyGL_' + function.name + ';')
 			self.newLine()
 
-			self.write('#ifndef ANYGL_NO_FUNCTION_DEFINES')
+			self.write('#ifndef ANYGL_NO_DEFINES')
 			for function in feature.functions:
 				params = '('
 				paramList = function.getParamList()
@@ -189,7 +191,7 @@ class GLHeaderGenerator(OutputGenerator):
 				else:
 					self.write('#define', function.name + params, 'ANYGL_CALL(AnyGL_' + \
 						function.name + ')' + params)
-			self.write('#endif /* ANYGL_NO_FUNCTION_DEFINES */')
+			self.write('#endif /* ANYGL_NO_DEFINES */')
 			self.newLine()
 
 		self.write('#if defined(__clang__)')

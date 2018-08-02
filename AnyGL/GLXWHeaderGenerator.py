@@ -22,6 +22,7 @@ class GLXWHeaderGenerator(OutputGenerator):
 		self.define = define
 		self.systemLines = systemLines
 		self.extensionsOnly = extensionsOnly
+		self.curEnums = []
 		self.curFunctions = []
 		self.curFeature = None
 		self.extension = False
@@ -93,7 +94,16 @@ class GLXWHeaderGenerator(OutputGenerator):
 			self.write('#endif', '/*', self.curFeature, '*/')
 			self.curFeature = None
 
+		if self.curEnums:
+			self.write('#ifndef ANYGL_NO_DEFINES')
+			for enum in self.curEnums:
+				self.write(enum)
+			self.write('#endif /* ANYGL_NO_DEFINES */')
+
 		if self.curFunctions:
+			if self.curEnums:
+				self.newLine()
+
 			if self.extension or not self.extensionsOnly:
 				# Function types
 				for function in self.curFunctions:
@@ -109,7 +119,7 @@ class GLXWHeaderGenerator(OutputGenerator):
 				self.newLine()
 
 				# Function defines.
-				self.write('#ifndef ANYGL_NO_FUNCTION_DEFINES')
+				self.write('#ifndef ANYGL_NO_DEFINES')
 				for function in self.curFunctions:
 					params = '('
 					paramList = function.getParamList()
@@ -123,12 +133,13 @@ class GLXWHeaderGenerator(OutputGenerator):
 					if function.alias:
 						name = function.alias
 					self.write('#define', function.name + params, 'AnyGL_' + name + params)
-				self.write('#endif /* ANYGL_NO_FUNCTION_DEFINES */')
+				self.write('#endif /* ANYGL_NO_DEFINES */')
 			else:
 				for function in self.curFunctions:
 					self.write(function.getFunctionDecl())
 
 		self.newLine()
+		self.curEnums = []
 		self.curFunctions = []
 		OutputGenerator.endFeature(self)
 
@@ -154,7 +165,7 @@ class GLXWHeaderGenerator(OutputGenerator):
 		t = enuminfo.elem.get('type')
 		if (t != '' and t != 'i'):
 			s += enuminfo.type
-		self.write(s)
+		self.curEnums.append(s)
 
 	def genCmd(self, cmdinfo, name):
 		OutputGenerator.genCmd(self, cmdinfo, name)

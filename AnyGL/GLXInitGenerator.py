@@ -49,7 +49,7 @@ class GLXInitGenerator(OutputGenerator):
 		self.newLine()
 		self.write('#if ANYGL_LOAD == ANYGL_LOAD_GLX')
 		self.write('#include <GL/glx.h>')
-		self.write('#define ANYGL_NO_FUNCTION_DEFINES')
+		self.write('#define ANYGL_NO_DEFINES')
 		self.write('#include "glx.h"')
 		self.newLine()
 

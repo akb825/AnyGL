@@ -122,7 +122,7 @@ class FptrLoadGenerator(OutputGenerator):
 			self.write('#endif')
 		self.newLine()
 
-		self.write('#define ANYGL_NO_FUNCTION_DEFINES')
+		self.write('#define ANYGL_NO_DEFINES')
 		self.write('#include "gl.h"')
 		self.newLine()
 
