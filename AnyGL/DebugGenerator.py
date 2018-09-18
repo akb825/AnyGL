@@ -168,6 +168,7 @@ class DebugGenerator(OutputGenerator):
 		self.write('static', function.returnType, 'APIENTRY debug_' + function.name + \
 			function.getArgList())
 		self.write('{')
+		self.write('\tconst CallsiteInfo* _curCallsiteInfo = &callsiteInfo;')
 
 		params = function.getParamList()
 		paramForward = ''
@@ -187,7 +188,7 @@ class DebugGenerator(OutputGenerator):
 			self.write('\t' + function.returnType, 'retVal =', 'default_' + function.name + '(' + \
 				paramForward + ');')
 
-		self.write('\tif (checkErrors)\n\t{')
+		self.write('\tif (!_curCallsiteInfo->disableErrorChecks)\n\t{')
 		self.write('\t\tGLenum _error = AnyGL_glGetError();')
 		self.write('\t\tif (_error != GL_NO_ERROR)\n\t\t{')
 		self.write('\t\t\tchar _buffer[PRINT_BUFFER_SIZE];')
@@ -195,7 +196,8 @@ class DebugGenerator(OutputGenerator):
 			'"' + formatStr + '"' + formatArgs + ');')
 		self.write('\t\t\tif (_length < 0 || _length >= PRINT_BUFFER_SIZE)')
 		self.write('\t\t\t\tstrncpy(_buffer, "' + function.name + '()", PRINT_BUFFER_SIZE);')
-		self.write('\t\t\terrorFunc(lastFile, lastFunction, lastLine, _error, _buffer);')
+		self.write('\t\t\terrorFunc(_curCallsiteInfo->lastFile, _curCallsiteInfo->lastFunction, ' \
+			'_curCallsiteInfo->lastLine, _error, _buffer);')
 		self.write('\t\t}\n\t}')
 
 		if function.returnType != 'void':
@@ -258,10 +260,13 @@ class DebugGenerator(OutputGenerator):
 		self.write('}')
 		self.newLine()
 		self.write('static AnyGLErrorFunc errorFunc = defaultErrorFunc;')
-		self.write('static ANYGL_THREAD int checkErrors = 1;')
-		self.write('static ANYGL_THREAD const char* lastFile;')
-		self.write('static ANYGL_THREAD const char* lastFunction;')
-		self.write('static ANYGL_THREAD unsigned int lastLine;')
+		self.write('typedef struct CallsiteInfo\n{')
+		self.write('\tint disableErrorChecks;')
+		self.write('\tconst char* lastFile;')
+		self.write('\tconst char* lastFunction;')
+		self.write('\tunsigned int lastLine;')
+		self.write('} CallsiteInfo;')
+		self.write('static ANYGL_THREAD CallsiteInfo callsiteInfo;')
 		self.newLine()
 
 		# Wrapper functions.
@@ -300,31 +305,33 @@ class DebugGenerator(OutputGenerator):
 		self.newLine()
 
 		self.write('int AnyGL_getErrorCheckingEnabled(void)\n{')
-		self.write('\treturn checkErrors;')
+		self.write('\treturn !callsiteInfo.disableErrorChecks;')
 		self.write('}')
 		self.newLine()
 
 		self.write('void AnyGL_setErrorCheckingEnabled(int enabled)\n{')
-		self.write('\tcheckErrors = enabled;')
+		self.write('\tcallsiteInfo.disableErrorChecks = !enabled;')
 		self.write('}')
 		self.newLine()
 
 		self.write('void AnyGL_getLastCallsite(const char** file, const char** function,' \
 			'unsigned int* line)\n{')
+		self.write('\tconst CallsiteInfo* curCallsiteInfo = &callsiteInfo;')
 		self.write('\tif (file)')
-		self.write('\t\t*file = lastFile;')
+		self.write('\t\t*file = curCallsiteInfo->lastFile;')
 		self.write('\tif (function)')
-		self.write('\t\t*function = lastFunction;')
+		self.write('\t\t*function = curCallsiteInfo->lastFunction;')
 		self.write('\tif (line)')
-		self.write('\t\t*line = lastLine;')
+		self.write('\t\t*line = curCallsiteInfo->lastLine;')
 		self.write('}')
 		self.newLine()
 
 		self.write('void AnyGL_setLastCallsite(const char* file, const char* function,' \
 			'unsigned int line)\n{')
-		self.write('\tlastFile = file;')
-		self.write('\tlastFunction = function;')
-		self.write('\tlastLine = line;')
+		self.write('\tCallsiteInfo* curCallsiteInfo = &callsiteInfo;')
+		self.write('\tcurCallsiteInfo->lastFile = file;')
+		self.write('\tcurCallsiteInfo->lastFunction = function;')
+		self.write('\tcurCallsiteInfo->lastLine = line;')
 		self.write('}')
 		self.newLine()
 
