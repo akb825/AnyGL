@@ -73,7 +73,11 @@ class DebugGenerator(OutputGenerator):
 		self.write('#define SIZET_FORMAT "I"')
 		self.write('#else')
 		self.write('#define ANYGL_THREAD __thread')
+		self.write('#if ANYGL_GLES')
+		self.write('#define SIZET_FORMAT "l"')
+		self.write('#else')
 		self.write('#define SIZET_FORMAT "z"')
+		self.write('#endif')
 		self.write('#endif')
 		self.write('#if ANYGL_APPLE')
 		self.write('#define HANDLE_FORMAT "p"')
@@ -111,10 +115,15 @@ class DebugGenerator(OutputGenerator):
 
 		if lastValue != None:
 			firstValue = orderedEnums[firstIndex].value
-			if firstValue:
-				self.write('\tif (e >=', hex(firstValue), '&& e <=', hex(lastValue) + ')')
+			if lastValue == 0xFFFFFFFF:
+				compareLast = 'e == ' + hex(lastValue)
 			else:
-				self.write('\tif (e <=', hex(lastValue) + ')')
+				compareLast = 'e <= ' + hex(lastValue)
+
+			if firstValue:
+				self.write('\tif (e >=', hex(firstValue), '&&', compareLast + ')')
+			else:
+				self.write('\tif (' + compareLast + ')')
 			self.write('\t\treturn enumNames[e -', hex(firstValue), '+', str(firstIndex) + '];')
 
 		self.write('\treturn "INVALID";\n}')
