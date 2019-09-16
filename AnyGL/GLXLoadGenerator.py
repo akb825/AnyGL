@@ -34,6 +34,7 @@ class GLXLoadGenerator(OutputGenerator):
 		self.coreFeatures = []
 		self.extensionFeatures = []
 		self.curFeature = None
+		self.allowDuplicateEntries = True
 
 	def newLine(self):
 		write('', file = self.outFile)
@@ -55,6 +56,7 @@ class GLXLoadGenerator(OutputGenerator):
 		self.write('int AnyGL_updateGLVersion(void);')
 		self.write('int AnyGL_queryExtension(const char* name);')
 		self.write('void AnyGL_initDebug(void);')
+		self.write('void AnyGL_clearFunctionPointers(void);')
 		self.newLine()
 
 	def endFile(self):
@@ -62,6 +64,9 @@ class GLXLoadGenerator(OutputGenerator):
 		self.write('\tif (!ANYGL_SUPPORTED(glXGetCurrentContext) || ' \
 			'!ANYGL_SUPPORTED(glXGetProcAddress) || !glXGetCurrentContext())')
 		self.write('\t\treturn 0;')
+
+		self.newLine()
+		self.write('\tAnyGL_clearFunctionPointers();')
 
 		# Load these feaures first. This includes glGetIntegerv to get the OpenGL version.
 		for feature in self.firstFeatures:
@@ -85,9 +90,6 @@ class GLXLoadGenerator(OutputGenerator):
 			for function in feature.functions:
 				self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 					')glXGetProcAddress((const GLubyte*)"' + function.name + '");')
-			self.write('\t}\n\telse\n\t{')
-			for function in feature.functions:
-				self.write('\t\tAnyGL_' + function.name, '= NULL;')
 			self.write('\t}')
 
 		# Load the extensions.
@@ -106,10 +108,6 @@ class GLXLoadGenerator(OutputGenerator):
 				else:
 					self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 						')glXGetProcAddress((const GLubyte*)"' + function.name + '");')
-			self.write('\t}\n\telse\n\t{')
-			for function in feature.functions:
-				if not function.alias:
-					self.write('\t\tAnyGL_' + function.name, '= NULL;')
 			self.write('\t}')
 
 		self.newLine()

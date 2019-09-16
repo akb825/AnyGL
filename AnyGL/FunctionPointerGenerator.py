@@ -19,6 +19,7 @@ class FunctionPointerGenerator(OutputGenerator):
 	def __init__(self, errFile = sys.stderr, warnFile = sys.stderr, diagFile = sys.stdout):
 		OutputGenerator.__init__(self, errFile, warnFile, diagFile)
 		self.curFeature = None
+		self.functions = []
 
 	def newLine(self):
 		write('', file = self.outFile)
@@ -36,6 +37,16 @@ class FunctionPointerGenerator(OutputGenerator):
 		self.write('ANYGL_EXPORT GLenum AnyGL_HALF_FLOAT = GL_HALF_FLOAT;')
 		self.newLine()
 
+	def endFile(self):
+		self.newLine()
+
+		self.write('void AnyGL_clearFunctionPointers(void)')
+		self.write('{')
+		for function in self.functions:
+			self.write('\tAnyGL_' + function + ' = NULL;')
+		self.write('}')
+		OutputGenerator.endFile(self)
+
 	def beginFeature(self, interface, emit):
 		OutputGenerator.beginFeature(self, interface, emit)
 		if emit:
@@ -52,3 +63,4 @@ class FunctionPointerGenerator(OutputGenerator):
 		function = FunctionInfo(cmdinfo.elem, self.curFeature)
 		if not function.alias:
 			self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')
+			self.functions.append(function.name)

@@ -712,6 +712,7 @@ class Registry:
         self.gen          = OutputGenerator()
         self.genOpts      = None
         self.emitFeatures = False
+        self.allowDuplicateEntries = False
     def loadElementTree(self, tree):
         """Load ElementTree into a Registry object and parse it"""
         self.tree = tree
@@ -723,6 +724,10 @@ class Registry:
     def setGenerator(self, gen):
         """Specify output generator object. None restores the default generator"""
         self.gen = gen
+        if hasattr(gen, 'allowDuplicateEntries'):
+            self.allowDuplicateEntries = gen.allowDuplicateEntries
+        else:
+            self.allowDuplicateEntries = False
     # addElementInfo - add information about an element to the
     # corresponding dictionary
     #   elem - <type>/<group>/<enum>/<command>/<feature>/<extension> Element
@@ -952,7 +957,7 @@ class Registry:
         if (not f.required):
             self.gen.logMsg('diag', '*** Skipping', ftype, fname, '(not required)')
             return
-        if (f.declared):
+        if (f.declared and not self.allowDuplicateEntries):
             self.gen.logMsg('diag', '*** Skipping', ftype, fname, '(already declared)')
             return
         #

@@ -103,15 +103,35 @@ class GLHeaderGenerator(OutputGenerator):
 			self.newLine()
 
 		self.write('/* Type declarations */')
+
+		# Basic types are now use khrplatform with the latest spec, which is only guaranteed to be
+		# available on GLES platforms. Need to manually declare them for desktop platforms.
+		self.write('#if !ANYGL_GLES')
+		self.write('#include <stddef.h>')
+		self.write('#include <stdint.h>')
+		self.write('typedef int8_t GLbyte;')
+		self.write('typedef uint8_t GLubyte;')
+		self.write('typedef int16_t GLshort;')
+		self.write('typedef uint16_t GLushort;')
+		self.write('typedef uint16_t GLushort;')
+		self.write('typedef float GLfloat;')
+		self.write('typedef float GLclampf;')
+		self.write('typedef uint16_t GLhalf;')
+		self.write('typedef int32_t GLfixed;')
+		self.write('typedef ptrdiff_t GLintptr;')
+		self.write('typedef ptrdiff_t GLsizeiptr;')
+		self.write('typedef int64_t GLint64;')
+		self.write('typedef uint64_t GLuint64;')
+		self.write('#endif')
+		self.newLine()
+
 		for feature in self.features:
 			if not feature.types:
 				continue
 
 			# These features have overlap between the types.
-			if feature.name == 'GL_VERSION_1_0' or feature.name == 'GL_VERSION_1_1' or \
-				feature.name == 'GL_ES_VERSION_2_0':
-				self.write('#if defined(ANYGL_VERSION_1_0) && defined(ANYGL_VERSION_1_0)',
-					'&& defined(ANYGL_ES_VERSION_2_0)')
+			if feature.name == 'GL_VERSION_1_0'  or feature.name == 'GL_ES_VERSION_2_0':
+				self.write('#if defined(ANYGL_VERSION_1_0) || defined(ANYGL_ES_VERSION_2_0)')
 			else:
 				self.write('#ifdef ANY' + feature.name)
 			curRequire = None
@@ -127,13 +147,6 @@ class GLHeaderGenerator(OutputGenerator):
 				self.write('#endif')
 			self.write('#endif /*', feature.name, '*/')
 			self.newLine()
-
-		# When including GLES headers directly no double types will be defined.
-		self.write('#if defined(ANYGL_VERSION_1_0) && !defined(ANYGL_ES_VERSION_2_0)')
-		self.write('typedef double GLdouble;')
-		self.write('typedef double GLclampd;')
-		self.write('#endif')
-		self.newLine()
 
 		self.write('/* Enum definitions */')
 		self.write('#ifndef ANYGL_NO_DEFINES')

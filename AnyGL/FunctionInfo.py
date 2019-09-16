@@ -27,6 +27,7 @@ manualFeatureAliases = \
 	'GL_EXT_robustness': 'EXT',
 	'GL_EXT_blend_func_extended': 'EXT',
 	'GL_EXT_disjoint_timer_query': 'EXT',
+	'GL_EXT_occlusion_query_boolean': 'EXT',
 	'GL_EXT_shader_image_load_store': 'EXT'
 }
 

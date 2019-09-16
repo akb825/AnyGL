@@ -55,6 +55,7 @@ class FptrLoadGenerator(OutputGenerator):
 		self.coreFeatures = []
 		self.extensionFeatures = []
 		self.curFeature = None
+		self.allowDuplicateEntries = True
 
 	def newLine(self):
 		write('', file = self.outFile)
@@ -132,6 +133,7 @@ class FptrLoadGenerator(OutputGenerator):
 		self.write('int AnyGL_updateGLVersion(void);')
 		self.write('int AnyGL_queryExtension(const char* name);')
 		self.write('void AnyGL_initDebug(void);')
+		self.write('void AnyGL_clearFunctionPointers(void);')
 		self.newLine()
 
 	def endFile(self):
@@ -140,6 +142,9 @@ class FptrLoadGenerator(OutputGenerator):
 		self.newLine()
 
 		self.write('int AnyGL_load(void)\n{')
+
+		self.write('\tAnyGL_clearFunctionPointers();')
+		self.newLine()
 
 		# Alwyas load first features.
 		for feature in self.firstFeatures:
@@ -151,7 +156,6 @@ class FptrLoadGenerator(OutputGenerator):
 		# Get the OpenGL version.
 		self.write('\tif (!AnyGL_updateGLVersion())')
 		self.write('\t\treturn 0;')
-		self.newLine()
 		
 		if self.isGles:
 			glEsBool = '1'
@@ -199,10 +203,6 @@ class FptrLoadGenerator(OutputGenerator):
 					else:
 						self.write('\t\tAnyGL_' + function.name + ' = (' + function.type + ')&' + \
 							function.name + ';')
-				self.write('\t}\n\telse\n\t{')
-				for function in feature.functions:
-					if not function.alias:
-						self.write('\t\tAnyGL_' + function.name + ' = 0;')
 				self.write('\t}')
 			self.write('#endif', '/*', feature.name, '*/')
 			self.newLine()

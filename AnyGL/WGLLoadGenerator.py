@@ -34,6 +34,7 @@ class WGLLoadGenerator(OutputGenerator):
 		self.coreFeatures = []
 		self.extensionFeatures = []
 		self.curFeature = None
+		self.allowDuplicateEntries = True
 
 	def newLine(self):
 		write('', file = self.outFile)
@@ -56,6 +57,7 @@ class WGLLoadGenerator(OutputGenerator):
 		self.write('int AnyGL_updateGLVersion(void);')
 		self.write('int AnyGL_queryExtension(const char* name);')
 		self.write('void AnyGL_initDebug(void);')
+		self.write('void AnyGL_clearFunctionPointers(void);')
 		self.write('extern HMODULE AnyGL_gllib;')
 		self.newLine()
 
@@ -63,6 +65,9 @@ class WGLLoadGenerator(OutputGenerator):
 		self.write('int AnyGL_load(void)\n{')
 		self.write('\tif (!AnyGL_gllib || !wglGetCurrentContext())')
 		self.write('\t\treturn 0;')
+
+		self.newLine()
+		self.write('\tAnyGL_clearFunctionPointers();')
 
 		# Load these features from the OpenGL library.
 		for feature in self.firstFeatures:
@@ -86,9 +91,6 @@ class WGLLoadGenerator(OutputGenerator):
 			for function in feature.functions:
 				self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 					')wglGetProcAddress("' + function.name + '");')
-			self.write('\t}\n\telse\n\t{')
-			for function in feature.functions:
-				self.write('\t\tAnyGL_' + function.name, '= NULL;')
 			self.write('\t}')
 
 		# Load the extensions.
@@ -107,10 +109,6 @@ class WGLLoadGenerator(OutputGenerator):
 				else:
 					self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 						')wglGetProcAddress("' + function.name + '");')
-			self.write('\t}\n\telse\n\t{')
-			for function in feature.functions:
-				if not function.alias:
-					self.write('\t\tAnyGL_' + function.name, '= NULL;')
 			self.write('\t}')
 
 		self.newLine()

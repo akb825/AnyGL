@@ -34,6 +34,7 @@ class EGLLoadGenerator(OutputGenerator):
 		self.coreFeatures = []
 		self.extensionFeatures = []
 		self.curFeature = None
+		self.allowDuplicateEntries = True
 
 	def newLine(self):
 		write('', file = self.outFile)
@@ -60,6 +61,7 @@ class EGLLoadGenerator(OutputGenerator):
 		self.write('int AnyGL_updateGLVersion(void);')
 		self.write('int AnyGL_queryExtension(const char* name);')
 		self.write('void AnyGL_initDebug(void);')
+		self.write('void AnyGL_clearFunctionPointers(void);')
 		self.write('static void* gllib;')
 		self.newLine()
 
@@ -82,6 +84,9 @@ class EGLLoadGenerator(OutputGenerator):
 		self.write('int AnyGL_load(void)\n{')
 		self.write('\tif (!gllib || !eglGetCurrentContext())')
 		self.write('\t\treturn 0;')
+
+		self.newLine()
+		self.write('\tAnyGL_clearFunctionPointers();')
 
 		# Load these features from the OpenGL library.
 		for feature in self.firstFeatures:
@@ -114,9 +119,6 @@ class EGLLoadGenerator(OutputGenerator):
 			for function in feature.functions:
 				self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 					')dlsym(gllib, "' + function.name + '");')
-			self.write('\t}\n\telse\n\t{')
-			for function in feature.functions:
-				self.write('\t\tAnyGL_' + function.name, '= NULL;')
 			self.write('\t}')
 
 		# Load the extensions.
@@ -135,10 +137,6 @@ class EGLLoadGenerator(OutputGenerator):
 				else:
 					self.write('\t\tAnyGL_' + function.name, '= (' + function.type + \
 						')eglGetProcAddress("' + function.name + '");')
-			self.write('\t}\n\telse\n\t{')
-			for function in feature.functions:
-				if not function.alias:
-					self.write('\t\tAnyGL_' + function.name, '= NULL;')
 			self.write('\t}')
 
 		self.newLine()
