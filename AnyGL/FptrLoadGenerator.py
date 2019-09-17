@@ -195,14 +195,23 @@ class FptrLoadGenerator(OutputGenerator):
 			self.write('\tAny' + feature.name, '= AnyGL_queryExtension("' + feature.name + '");')
 			if feature.functions:
 				self.write('\tif (Any' + feature.name + ')\n\t{')
+				compatibility = False
 				for function in feature.functions:
+					if function.compatibility != compatibility:
+						if function.compatibility:
+							self.write('#if !ANYGL_APPLE')
+						else:
+							self.write('#endif')
+						compatibility = function.compatibility
 					if function.alias:
 						self.write('\t\tif (!AnyGL_' + function.alias + ')')
-						self.write('\t\t\tAnyGL_' + function.alias + ' = (' + function.type + ')&' + \
-							function.name + ';')
+						self.write('\t\t\tAnyGL_' + function.alias + ' = (' + \
+							function.type + ')&' + function.name + ';')
 					else:
 						self.write('\t\tAnyGL_' + function.name + ' = (' + function.type + ')&' + \
 							function.name + ';')
+				if compatibility:
+					self.write('#endif')
 				self.write('\t}')
 			self.write('#endif', '/*', feature.name, '*/')
 			self.newLine()
