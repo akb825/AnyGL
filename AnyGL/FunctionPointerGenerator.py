@@ -43,7 +43,7 @@ class FunctionPointerGenerator(OutputGenerator):
 		self.write('void AnyGL_clearFunctionPointers(void)')
 		self.write('{')
 		for function in self.functions:
-			self.write('\tAnyGL_' + function + ' = NULL;')
+			self.write('\tAnyGL_' + function + ' = 0;')
 		self.write('}')
 		OutputGenerator.endFile(self)
 
