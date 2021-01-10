@@ -25,6 +25,13 @@ compatibilityFuncs = \
 	'glSecondaryColorP',
 ]
 
+# Functions that aren't always available based on the extension they're registered under.
+ignoreFuncs = \
+{ \
+	'glDepthRangeArraydvNV',
+	'glDepthRangeIndexeddNV'
+}
+
 class FptrFunctionInfo(FunctionInfo):
 	def __init__(self, command, feature):
 		FunctionInfo.__init__(self, command, feature)
@@ -197,6 +204,9 @@ class FptrLoadGenerator(OutputGenerator):
 				self.write('\tif (Any' + feature.name + ')\n\t{')
 				compatibility = False
 				for function in feature.functions:
+					if function.name in ignoreFuncs:
+						continue
+
 					if function.compatibility != compatibility:
 						if function.compatibility:
 							self.write('#if !ANYGL_APPLE')
