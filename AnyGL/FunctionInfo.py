@@ -1,6 +1,4 @@
-#!/bin/python
-#
-# Copyright 2017 Aaron Barany
+# Copyright 2017-2025 Aaron Barany
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +14,7 @@
 
 from .reg import *
 
-manualFeatureAliases = \
-{ \
+manualFeatureAliases = {
 	'GL_OES_blend_equation_separate': 'OES',
 	'GL_OES_blend_func_separate': 'OES',
 	'GL_OES_blend_subtract': 'OES',
@@ -31,8 +28,7 @@ manualFeatureAliases = \
 	'GL_EXT_shader_image_load_store': 'EXT'
 }
 
-manualFunctionAliases = \
-{ \
+manualFunctionAliases = {
 	'glDeleteTexturesEXT': 'EXT',
 	'glGenTexturesEXT': 'EXT',
 	'glIsTextureEXT': 'EXT',

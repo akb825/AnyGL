@@ -131,8 +131,7 @@ class DebugGenerator(OutputGenerator):
 
 	def getFormatStr(self, param, groups):
 		ptype = param.type
-		if ptype == 'GLenum' or ptype == 'GLboolean' or ptype == 'const GLchar *' or \
-			(param.group and param.group in groups and ptype[-1] != '*'):
+		if ptype == 'GLenum' or ptype == 'GLboolean' or ptype == 'const GLchar *':
 			return '%s'
 		elif ptype[-1] == '*' or (len(ptype) > 4 and ptype[-4:] == 'PROC') or \
 			ptype == 'GLsync' or ptype == 'GLeglImageOES' or ptype == 'GLeglClientBufferEXT':
@@ -160,7 +159,7 @@ class DebugGenerator(OutputGenerator):
 			raise Exception('Unknown type: ' + ptype)
 
 	def getFormatArg(self, param, groups):
-		if param.group and param.group in groups and param.type[-1] != '*':
+		if param.group and param.group in groups and param.type == 'GLenum':
 			return 'get' + param.group + 'EnumStr(' + param.name + ')'
 		elif param.type == 'GLboolean':
 			return 'getBooleanEnumStr(' + param.name + ')'
@@ -214,11 +213,12 @@ class DebugGenerator(OutputGenerator):
 		self.write('}')
 		self.newLine()
 
-	def hasAllEnums(self, group, enumDict):
-		for enum in group.enums:
-			if enum not in enumDict:
-				return False
-		return True
+	def filterEnums(self, groupEnums, enumDict):
+		finalEnums = []
+		for enum in groupEnums:
+			if enum.name in enumDict:
+				finalEnums.append(enum)
+		return finalEnums
 
 	def endFile(self):
 		self.write('#if ANYGL_ALLOW_DEBUG')
@@ -236,18 +236,29 @@ class DebugGenerator(OutputGenerator):
 		usedGroups = set()
 		for function in self.functions:
 			for param in function.getParamList():
-				if (param.type == 'GLenum' or param.type == 'GLboolean') and param.group:
+				if param.type == 'GLenum' and param.group:
 					usedGroups.add(param.group)
+				elif param.type == 'GLboolean':
+					usedGroups.add('Boolean')
 
 		self.outputEnums('Any', self.enums)
-		groups = set()
-		for groupName, group in self.registry.groupdict.items():
-			if groupName in usedGroups and self.hasAllEnums(group, enumDict):
-				groups.add(groupName)
-				enums = []
-				for groupEnum in group.enums:
-					enums.append(enumDict[groupEnum])
-				self.outputEnums(groupName, enums)
+		groups = dict()
+		for enum, enumInfo in self.registry.enumdict.items():
+			enumGroups = enumInfo.elem.get('group')
+			if enumGroups:
+				enumInfo = EnumInfo(enumInfo, enum)
+				for group in enumGroups.split(','):
+					enumValues = groups.get(group)
+					if not enumValues:
+						enumValues = []
+						groups[group] = enumValues
+					enumValues.append(enumInfo)
+
+		for groupName, groupEnums in groups.items():
+			if groupName in usedGroups:
+				filteredEnums = self.filterEnums(groupEnums, enumDict)
+				if filteredEnums:
+					self.outputEnums(groupName, filteredEnums)
 
 		self.write('static void defaultErrorFunc(const char* file, const char* function, ' \
 			'unsigned int line, unsigned int glError, const char* glFunction)\n{')
@@ -280,7 +291,7 @@ class DebugGenerator(OutputGenerator):
 
 		# Wrapper functions.
 		for function in self.functions:
-			self.outputDebugFunction(function, groups)
+			self.outputDebugFunction(function, groups.keys())
 
 		# Initialization.
 		self.write('void AnyGL_initDebug(void)\n{')
