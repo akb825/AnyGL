@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2017 Aaron Barany
+# Copyright 2017-2025 Aaron Barany
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ glxOptions = GeneratorOptions(
 	addExtensions = '.*',
 	removeExtensions = '(GLX_ARB_get_proc_address)|(GLX_SGI.*)')
 write('Outputting', glxOptions.filename + '...')
-glxRegistry.setGenerator(GLXWHeaderGenerator('ANYGL_LOAD_GLX', ['#include <X11/Xlib.h>',
+glxRegistry.setGenerator(GLXWHeaderGenerator('ANYGL_HAS_GLX', ['#include <X11/Xlib.h>',
 	'#include <X11/Xutil.h>'], extensionsOnly = False, diagFile = diagFile))
 glxRegistry.apiGen(glxOptions)
 
@@ -152,7 +152,7 @@ wglOptions = GeneratorOptions(
 	emitversions = None,
 	addExtensions = '.*')
 write('Outputting', wglOptions.filename + '...')
-wglRegistry.setGenerator(GLXWHeaderGenerator('ANYGL_LOAD_WGL', ['#define WIN32_LEAN_AND_MEAN',
+wglRegistry.setGenerator(GLXWHeaderGenerator('ANYGL_HAS_WGL', ['#define WIN32_LEAN_AND_MEAN',
 	'#ifndef _WINDOWS_', '#undef APIENTRY', '#endif', '#include <Windows.h>'],
 	diagFile = diagFile))
 wglRegistry.apiGen(wglOptions)

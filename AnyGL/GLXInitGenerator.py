@@ -47,7 +47,7 @@ class GLXInitGenerator(OutputGenerator):
 
 		self.write('#include "AnyGLConfig.h"')
 		self.newLine()
-		self.write('#if ANYGL_LOAD == ANYGL_LOAD_GLX')
+		self.write('#if ANYGL_HAS_GLX')
 		self.write('#include <GL/glx.h>')
 		self.write('#define ANYGL_NO_DEFINES')
 		self.write('#include "glx.h"')
@@ -66,7 +66,7 @@ class GLXInitGenerator(OutputGenerator):
 				self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')
 		self.newLine()
 
-		self.write('int AnyGL_initialize(void)\n{')
+		self.write('int AnyGL_GLX_initialize(void)\n{')
 
 		self.write('\tstatic int initialized;')
 		self.write('\tif (initialized)')
@@ -104,7 +104,7 @@ class GLXInitGenerator(OutputGenerator):
 		self.write('\treturn 1;\n}')
 
 		self.newLine()
-		self.write('void AnyGL_shutdown(void) {}')
+		self.write('void AnyGL_GLX_shutdown(void) {}')
 
 		self.newLine()
 		self.write('#endif /* ANYGL_LOAD */')

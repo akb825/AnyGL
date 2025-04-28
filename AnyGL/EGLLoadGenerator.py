@@ -49,7 +49,7 @@ class EGLLoadGenerator(OutputGenerator):
 		self.write('#include "AnyGL.h"')
 		self.write('#include "gl.h"')
 		self.newLine()
-		self.write('#if ANYGL_LOAD == ANYGL_LOAD_EGL && ANYGL_GLES == ' +
+		self.write('#if ANYGL_HAS_EGL && ANYGL_GLES == ' +
 			('1' if self.gles else '0'))
 		self.write('#include <EGL/egl.h>')
 		self.write('#include <dlfcn.h>')
@@ -66,7 +66,7 @@ class EGLLoadGenerator(OutputGenerator):
 		self.write('static void* gllib;')
 		self.newLine()
 
-		self.write('int AnyGL_initialize(void)\n{')
+		self.write('int AnyGL_EGL_initialize(void)\n{')
 		self.write('\tif (gllib)\n\t\treturn 1;')
 		if self.gles:
 			self.write('\tgllib = dlopen("libGLESv2.so", RTLD_LAZY);')
@@ -75,14 +75,14 @@ class EGLLoadGenerator(OutputGenerator):
 		self.write('\treturn gllib != NULL;\n}')
 		self.newLine()
 
-		self.write('void AnyGL_shutdown(void)\n{')
+		self.write('void AnyGL_EGL_shutdown(void)\n{')
 		self.write('\tif (gllib)\n\t{')
 		self.write('\t\tdlclose(gllib);')
 		self.write('\t\tgllib = NULL;\n\t}\n}')
 		self.newLine()
 
 	def endFile(self):
-		self.write('int AnyGL_load(void)\n{')
+		self.write('int AnyGL_EGL_load(void)\n{')
 		self.write('\tif (!gllib || !eglGetCurrentContext())')
 		self.write('\t\treturn 0;')
 

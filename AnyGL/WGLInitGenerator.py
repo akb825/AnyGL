@@ -38,7 +38,7 @@ class WGLInitGenerator(OutputGenerator):
 
 		self.write('#include "AnyGLConfig.h"')
 		self.newLine()
-		self.write('#if ANYGL_LOAD == ANYGL_LOAD_WGL')
+		self.write('#if ANYGL_HAS_WGL')
 		self.write('#define WIN32_LEAN_AND_MEAN')
 		self.write('#undef APIENTRY')
 		self.write('#include <Windows.h>')
@@ -63,7 +63,7 @@ class WGLInitGenerator(OutputGenerator):
 				self.write('ANYGL_EXPORT', function.type, 'AnyGL_' + function.name + ';')
 		self.newLine()
 
-		self.write('int AnyGL_initialize(void)\n{')
+		self.write('int AnyGL_WGL_initialize(void)\n{')
 
 		# May need to create a dummy context in order to load the exensions.
 		createContextCode = \
@@ -158,7 +158,7 @@ class WGLInitGenerator(OutputGenerator):
 		self.write('\treturn 1;\n}')
 
 		self.newLine()
-		self.write('void AnyGL_shutdown(void)\n{')
+		self.write('void AnyGL_WGL_shutdown(void)\n{')
 		self.write('\tif (AnyGL_gllib)\n\t{')
 		self.write('\t\tFreeLibrary(AnyGL_gllib);')
 		self.write('\t\tAnyGL_gllib = NULL;')

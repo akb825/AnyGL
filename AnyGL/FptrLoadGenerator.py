@@ -76,7 +76,7 @@ class FptrLoadGenerator(OutputGenerator):
 		self.newLine()
 		if self.isGles:
 			self.coreVersion = '2.0'
-			self.write('#if ANYGL_LOAD == ANYGL_LOAD_FPTR && ANYGL_GLES')
+			self.write('#if ANYGL_HAS_FPTR && ANYGL_GLES')
 			self.write('#define GL_GLEXT_PROTOTYPES')
 			self.write('#if ANYGL_APPLE')
 			self.write('#  if ANYGL_GLES_VERSION >= 32')
@@ -112,7 +112,7 @@ class FptrLoadGenerator(OutputGenerator):
 			self.newLine()
 		else:
 			self.coreVersion = '1.0'
-			self.write('#if ANYGL_LOAD == ANYGL_LOAD_FPTR && !ANYGL_GLES')
+			self.write('#if ANYGL_HAS_FPTR && !ANYGL_GLES')
 			self.write('#define GL_GLEXT_PROTOTYPES')
 			self.write('#if ANYGL_APPLE')
 			self.write('#  if ANYGL_GL_VERSION >= 30')
@@ -146,11 +146,11 @@ class FptrLoadGenerator(OutputGenerator):
 		self.newLine()
 
 	def endFile(self):
-		self.write('int AnyGL_initialize(void)\n{\n\treturn 1;\n}')
-		self.write('void AnyGL_shutdown(void) {}')
+		self.write('int AnyGL_FPTR_initialize(void)\n{\n\treturn 1;\n}')
+		self.write('void AnyGL_FPTR_shutdown(void) {}')
 		self.newLine()
 
-		self.write('int AnyGL_load(void)\n{')
+		self.write('int AnyGL_FPTR_load(void)\n{')
 
 		self.write('\tAnyGL_clearFunctionPointers();')
 		self.newLine()

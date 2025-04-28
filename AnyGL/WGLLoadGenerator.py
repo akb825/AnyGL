@@ -47,7 +47,7 @@ class WGLLoadGenerator(OutputGenerator):
 		self.write('#include "AnyGL.h"')
 		self.write('#include "gl.h"')
 		self.newLine()
-		self.write('#if ANYGL_LOAD == ANYGL_LOAD_WGL')
+		self.write('#if ANYGL_HAS_WGL')
 		self.write('#include "wgl.h"')
 		self.newLine()
 
@@ -62,7 +62,7 @@ class WGLLoadGenerator(OutputGenerator):
 		self.newLine()
 
 	def endFile(self):
-		self.write('int AnyGL_load(void)\n{')
+		self.write('int AnyGL_WGL_load(void)\n{')
 		self.write('\tif (!AnyGL_gllib || !wglGetCurrentContext())')
 		self.write('\t\treturn 0;')
 

@@ -45,7 +45,7 @@ class GLXWHeaderGenerator(OutputGenerator):
 		self.write('#include "AnyGLConfig.h"')
 		self.write('#include "gl.h"')
 		self.newLine()
-		self.write('#if ANYGL_LOAD ==', self.define)
+		self.write('#if', self.define)
 		for line in self.systemLines:
 			self.write(line)
 		self.newLine()
